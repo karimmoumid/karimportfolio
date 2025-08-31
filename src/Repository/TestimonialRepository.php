@@ -30,7 +30,16 @@ class TestimonialRepository extends ServiceEntityRepository
 //            ->getResult()
 //        ;
 //    }
-
+public function testimonialsGeneral(): array
+{
+    return $this->createQueryBuilder('t')
+        ->where('t.project IS NULL')
+        ->orderBy('t.created_at', 'DESC')
+        ->setMaxResults(3)
+        ->getQuery()
+        ->getResult()
+    ;
+}
 //    public function findOneBySomeField($value): ?Testimonial
 //    {
 //        return $this->createQueryBuilder('t')

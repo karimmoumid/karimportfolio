@@ -1,17 +1,193 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Karim MOUMID - Développeur Web Full-Stack{% endblock %}</title>
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{% block meta_description %}Portfolio de Karim MOUMID, développeur web full-stack spécialisé en Symfony, PHP, JavaScript. Créateur d'applications web innovantes et performantes.{% endblock %}">
+    <meta name="keywords" content="Karim MOUMID, développeur web, Symfony, PHP, JavaScript, portfolio, full-stack">
+    <meta name="author" content="Karim MOUMID">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ block('title') }}">
+    <meta property="og:description" content="{{ block('meta_description') }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ app.request.uri }}">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
+    {% block stylesheets %}{% endblock %}
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+
+    <!-- Custom JS -->
+    <script src="{{ asset('js/script.js') }}" defer></script>
+
+    {% block javascripts %}{% endblock %}
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="{{ path('app_home') }}">
+            <span class="brand-initial">KM</span>
+            Karim MOUMID
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_home') }}">
+                        <i class="fas fa-home me-1"></i>Accueil
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_about') }}">
+                        <i class="fas fa-user me-1"></i>À propos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_projects') }}">
+                        <i class="fas fa-code me-1"></i>Projets
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ path('app_contact') }}">
+                        <i class="fas fa-envelope me-1"></i>Contact
+                    </a>
+                </li>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog me-1"></i>Admin
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ path('admin_dashboard') }}">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                </a></li>
+                            <li><a class="dropdown-item" href="{{ path('admin_projects') }}">
+                                    <i class="fas fa-folder me-2"></i>Projets
+                                </a></li>
+                            <li><a class="dropdown-item" href="{{ path('admin_skills') }}">
+                                    <i class="fas fa-star me-2"></i>Compétences
+                                </a></li>
+                            <li><a class="dropdown-item" href="{{ path('admin_messages') }}">
+                                    <i class="fas fa-comments me-2"></i>Messages
+                                </a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Flash Messages -->
+<div class="flash-messages">
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show" role="alert">
+                {{ message|raw }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
+<!-- Main Content -->
+<main>
+    {% block body %}{% endblock %}
+</main>
+
+<!-- Footer -->
+<footer class="bg-dark text-light py-5 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4">
+                <h5 class="fw-bold mb-3">
+                    <span class="brand-initial">KM</span>
+                    Karim MOUMID
+                </h5>
+                <p class="text-light opacity-75">
+                    Développeur web full-stack passionné par la création d'applications
+                    web innovantes et performantes. Spécialisé en Symfony et technologies modernes.
+                </p>
+                <div class="d-flex gap-2">
+                    <a href="https://github.com/karimmoumid" class="btn btn-outline-light btn-sm" target="_blank">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/karim-moumid-0a0312104/" class="btn btn-outline-light btn-sm" target="_blank">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="mailto:karimmoumid@gmail.com" class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4 mb-4">
+                <h5 class="fw-bold mb-3">Navigation</h5>
+                <ul class="list-unstyled">
+                    <li><a href="{{ path('app_home') }}" class="text-light opacity-75 text-decoration-none">Accueil</a></li>
+                    <li><a href="{{ path('app_about') }}" class="text-light opacity-75 text-decoration-none">À propos</a></li>
+                    <li><a href="{{ path('app_projects') }}" class="text-light opacity-75 text-decoration-none">Projets</a></li>
+                    <li><a href="{{ path('app_contact') }}" class="text-light opacity-75 text-decoration-none">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-4 mb-4">
+                <h5 class="fw-bold mb-3">Contact</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="fas fa-envelope me-2"></i>
+                        <a href="mailto:karimmoumid@gmail.com" class="text-light opacity-75 text-decoration-none">
+                            karimmoumid@gmail.com
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-phone me-2"></i>
+                        <a href="tel:+33751953339" class="text-light opacity-75 text-decoration-none">
+                            +33 7 51 95 33 39
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-map-marker-alt me-2"></i>
+                        <span class="text-light opacity-75">Deuil-la-Barre, France</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <hr class="my-4 opacity-25">
+
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="mb-0 opacity-75">
+                    &copy; {{ "now"|date("Y") }} Karim MOUMID. Tous droits réservés.
+                </p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <p class="mb-0 opacity-75">
+                    Développé avec ❤️ et <strong>Symfony {{ constant('Symfony\\Component\\HttpKernel\\Kernel::VERSION') }}</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+</body>
 </html>

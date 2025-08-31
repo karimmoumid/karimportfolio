@@ -30,6 +30,16 @@ class ProjectRepository extends ServiceEntityRepository
 //            ->getResult()
 //        ;
 //    }
+public function featuredProjects() : array
+{
+    return $this->createQueryBuilder('p')
+        ->orderBy('p.created_at', 'DESC')
+        ->setMaxResults(3)
+        ->getQuery()
+        ->getResult();
+}
+
+
 
 //    public function findOneBySomeField($value): ?Project
 //    {
