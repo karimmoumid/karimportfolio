@@ -137,4 +137,44 @@ class Message
 
         return $this;
     }
+
+    // ... autres propriétés et méthodes
+
+    /**
+     * Vérifie si le message a été lu
+     */
+    public function isRead(): bool
+    {
+        return $this->readAt !== null;
+    }
+
+    /**
+     * Marque le message comme lu
+     */
+    public function markAsRead(): static
+    {
+        if (!$this->readAt) {
+            $this->readAt = new \DateTime();
+        }
+        return $this;
+    }
+
+    /**
+     * Retourne le temps écoulé depuis la création
+     */
+    public function getTimeAgo(): string
+    {
+        $now = new \DateTime();
+        $diff = $now->diff($this->createdAt);
+
+        if ($diff->days > 0) {
+            return $diff->days . ' jour' . ($diff->days > 1 ? 's' : '');
+        } elseif ($diff->h > 0) {
+            return $diff->h . ' heure' . ($diff->h > 1 ? 's' : '');
+        } elseif ($diff->i > 0) {
+            return $diff->i . ' minute' . ($diff->i > 1 ? 's' : '');
+        } else {
+            return 'à l\'instant';
+        }
+    }
 }

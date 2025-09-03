@@ -1,20 +1,172 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ProjectController!{% endblock %}
+{% block title %}Mes Projets - {{ parent() }}{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <!-- Header Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="display-4 fw-bold text-primary mb-3">Mes Projets</h1>
+                    <p class="lead text-muted">
+                        Découvrez une sélection de mes réalisations en développement web
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <!-- Filters Section -->
+    <section class="py-4 bg-white border-bottom">
+        <div class="container">
+            <form method="GET" id="projectFilters">
+                <div class="row align-items-end g-3">
+                    <div class="col-lg-6">
+                        <label for="search" class="form-label">Rechercher un projet</label>
+                        <input type="search"
+                               name="search"
+                               id="search"
+                               class="form-control form-control-lg"
+                               placeholder="Rechercher par titre ou description..."
+                               value="{{ currentSearch }}">
+                    </div>
+                    <div class="col-lg-4">
+                        <label for="skill" class="form-label">Filtrer par technologie</label>
+                        <select name="skill" id="skill" class="form-select form-select-lg">
+                            <option value="">Toutes les technologies</option>
+                            {% for skill in skills %}
+                                <option value="{{ skill.name }}" {{ currentSkill == skill.name ? 'selected' : '' }}>
+                                    {{ skill.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-lg-2">
+                        <button type="submit" class="btn btn-primary btn-lg w-100">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/var/www/html/src/Controller/ProjectController.php</code></li>
-        <li>Your template at <code>/var/www/html/templates/project/index.html.twig</code></li>
-    </ul>
-</div>
+    <!-- Projects Grid -->
+    <section class="py-5">
+        <div class="container">
+            {% if projects %}
+                <div class="row g-4" id="projectsContainer">
+                    {% for project in projects %}
+                        <div class="col-lg-6 col-xl-4 mb-4">
+                            <div class="card project-card h-100 border-0">
+                                <div class="project-image">
+                                    {% if project.image %}
+                                        <img src="{{ asset('uploads/projects/' ~ project.image) }}"
+                                             class="card-img-top"
+                                             alt="{{ project.title }}"
+                                             style="height: 250px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="project-placeholder bg-light d-flex align-items-center justify-content-center"
+                                             style="height: 250px;">
+                                            <i class="fas fa-code fa-3x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="project-overlay">
+                                        <a href="{{ path('app_project_show', {id: project.id}) }}"
+                                           class="btn btn-primary btn-lg">
+                                            <i class="fas fa-eye me-2"></i>Voir le projet
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <h3 class="card-title h5 mb-3">
+                                        <a href="{{ path('app_project_show', {id: project.id}) }}"
+                                           class="text-decoration-none text-primary">
+                                            {{ project.title }}
+                                        </a>
+                                    </h3>
+
+                                    <p class="card-text text-muted mb-3">
+                                        {{ project.description|length > 120 ?
+                                        project.description|slice(0, 120) ~ '...' :
+                                        project.description }}
+                                    </p>
+
+                                    <div class="project-skills mb-3">
+                                        {% for skill in project.skill|slice(0, 4) %}
+                                            <span class="badge bg-light text-dark me-1 mb-1">
+                                            {{ skill.name }}
+                                        </span>
+                                        {% endfor %}
+                                        {% if project.skill|length > 4 %}
+                                            <span class="badge bg-secondary mb-1">
+                                            +{{ project.skill|length - 4 }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">
+                                            <i class="fas fa-eye me-1"></i>{{ project.viewCount }} vues
+                                        </small>
+                                        <small class="text-muted">
+                                            <i class="fas fa-calendar me-1"></i>{{ project.createdAt|date('M Y') }}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if projects|length == 0 %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-search fa-4x text-muted mb-4"></i>
+                        <h3 class="text-muted">Aucun projet trouvé</h3>
+                        <p class="text-muted mb-4">
+                            Aucun projet ne correspond à vos critères de recherche.
+                        </p>
+                        <a href="{{ path('app_projects') }}" class="btn btn-primary">
+                            <i class="fas fa-refresh me-2"></i>Voir tous les projets
+                        </a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-code fa-4x text-muted mb-4"></i>
+                    <h3 class="text-muted">Aucun projet disponible</h3>
+                    <p class="text-muted">
+                        Les projets seront bientôt disponibles !
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('projectFilters');
+            const searchInput = document.getElementById('search');
+            const skillSelect = document.getElementById('skill');
+
+            // Auto-submit form on skill change
+            skillSelect.addEventListener('change', function() {
+                form.submit();
+            });
+
+            // Submit form on search input with debounce
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    form.submit();
+                }, 500);
+            });
+        });
+    </script>
 {% endblock %}

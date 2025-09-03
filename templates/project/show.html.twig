@@ -1,0 +1,260 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ project.title }} - Mes Projets{% endblock %}
+
+{% block meta_description %}{{ project.description }}{% endblock %}
+
+{% block body %}
+    <!-- Project Header -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
+                            <li class="breadcrumb-item"><a href="{{ path('app_projects') }}">Projets</a></li>
+                            <li class="breadcrumb-item active">{{ project.title }}</li>
+                        </ol>
+                    </nav>
+
+                    <h1 class="display-5 fw-bold text-primary mb-3">{{ project.title }}</h1>
+                    <p class="lead text-muted mb-4">{{ project.description }}</p>
+
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <span class="text-muted me-3">
+                        <i class="fas fa-eye me-1"></i>{{ project.viewCount }} vues
+                    </span>
+                        <span class="text-muted me-3">
+                        <i class="fas fa-calendar me-1"></i>{{ project.createdAt|date('d/m/Y') }}
+                    </span>
+                        {% if project.updatedAt and project.updatedAt != project.createdAt %}
+                            <span class="text-muted">
+                            <i class="fas fa-edit me-1"></i>Mis à jour le {{ project.updatedAt|date('d/m/Y') }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Content -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mb-4">
+                    <!-- Project Image -->
+                    {% if project.image %}
+                        <div class="project-image-main mb-5">
+                            <img src="{{ asset('uploads/projects/' ~ project.image) }}"
+                                 class="img-fluid rounded shadow"
+                                 alt="{{ project.title }}"
+                                 style="width: 100%; max-height: 400px; object-fit: cover;">
+                        </div>
+                    {% endif %}
+
+                    <!-- Project Description -->
+                    <div class="project-description">
+                        <h2 class="h3 mb-4">Description du projet</h2>
+                        {% if project.fullDescription %}
+                            <div class="content">
+                                {{ project.fullDescription|nl2br }}
+                            </div>
+                        {% else %}
+                            <div class="content">
+                                {{ project.description|nl2br }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Project Gallery -->
+                    {% if project.images|length > 0 %}
+                        <div class="project-gallery mt-5">
+                            <h3 class="h4 mb-4">Galerie d'images</h3>
+                            <div class="row g-3">
+                                {% for image in project.images %}
+                                    <div class="col-md-6 col-lg-4">
+                                        <img src="{{ asset('uploads/projects/' ~ image.filename) }}"
+                                             class="img-fluid rounded shadow-sm"
+                                             alt="{{ image.altText ?? project.title }}"
+                                             data-bs-toggle="modal"
+                                             data-bs-target="#imageModal{{ image.id }}"
+                                             style="cursor: pointer; height: 200px; width: 100%; object-fit: cover;">
+                                    </div>
+
+                                    <!-- Modal for image -->
+                                    <div class="modal fade" id="imageModal{{ image.id }}" tabindex="-1">
+                                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">{{ image.altText ?? project.title }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img src="{{ asset('uploads/projects/' ~ image.filename) }}"
+                                                         class="img-fluid"
+                                                         alt="{{ image.altText ?? project.title }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Testimonials for this project -->
+                    {% if testimonials %}
+                        <div class="project-testimonials mt-5">
+                            <h3 class="h4 mb-4">Témoignages sur ce projet</h3>
+                            <div class="row g-4">
+                                {% for testimonial in testimonials %}
+                                    <div class="col-md-6">
+                                        <div class="card border-0 bg-light">
+                                            <div class="card-body">
+                                                <div class="testimonial-rating mb-2 text-warning">
+                                                    {% for i in 1..testimonial.rating %}
+                                                        <i class="fas fa-star"></i>
+                                                    {% endfor %}
+                                                </div>
+                                                <blockquote class="blockquote">
+                                                    <p>"{{ testimonial.content }}"</p>
+                                                </blockquote>
+                                                <div class="testimonial-author">
+                                                    <strong class="text-primary">{{ testimonial.authorName }}</strong>
+                                                    {% if testimonial.authorWork %}
+                                                        <br><small class="text-muted">{{ testimonial.authorWork }}</small>
+                                                    {% endif %}
+                                                    {% if testimonial.authorCompany %}
+                                                        <br><small class="text-muted">{{ testimonial.authorCompany }}</small>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-lg-4">
+                    <!-- Project Info Sidebar -->
+                    <div class="project-sidebar">
+                        <!-- Technologies Used -->
+                        {% if project.skill|length > 0 %}
+                            <div class="card border-0 bg-light mb-4">
+                                <div class="card-body">
+                                    <h4 class="card-title h5">
+                                        <i class="fas fa-tools text-primary me-2"></i>Technologies utilisées
+                                    </h4>
+                                    <div class="skills-list">
+                                        {% for skill in project.skill %}
+                                            <span class="badge bg-primary me-2 mb-2 fs-6">
+                                            {{ skill.name }}
+                                        </span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <!-- Project Stats -->
+                        <div class="card border-0 bg-light mb-4">
+                            <div class="card-body">
+                                <h4 class="card-title h5">
+                                    <i class="fas fa-chart-bar text-primary me-2"></i>Statistiques
+                                </h4>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-2">
+                                        <i class="fas fa-eye text-muted me-2"></i>
+                                        <strong>{{ project.viewCount }}</strong> vues
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-calendar text-muted me-2"></i>
+                                        Créé le <strong>{{ project.createdAt|date('d/m/Y') }}</strong>
+                                    </li>
+                                    {% if project.skill|length > 0 %}
+                                        <li class="mb-2">
+                                            <i class="fas fa-code text-muted me-2"></i>
+                                            <strong>{{ project.skill|length }}</strong> technologies
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Contact CTA -->
+                        <div class="card border-0 bg-primary text-white">
+                            <div class="card-body text-center">
+                                <h4 class="card-title">Projet similaire ?</h4>
+                                <p class="card-text">
+                                    Vous avez un projet similaire en tête ? Discutons-en !
+                                </p>
+                                <a href="{{ path('app_contact') }}" class="btn btn-light">
+                                    <i class="fas fa-comments me-2"></i>Me contacter
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Related Projects -->
+    {% if relatedProjects|length > 0 %}
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 mb-4">
+                        <h2 class="h3">Projets similaires</h2>
+                        <p class="text-muted">Découvrez d'autres projets qui pourraient vous intéresser</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    {% for relatedProject in relatedProjects %}
+                        <div class="col-lg-4">
+                            <div class="card project-card h-100 border-0">
+                                <div class="project-image">
+                                    {% if relatedProject.image %}
+                                        <img src="{{ asset('uploads/projects/' ~ relatedProject.image) }}"
+                                             class="card-img-top"
+                                             alt="{{ relatedProject.title }}"
+                                             style="height: 200px; object-fit: cover;">
+                                    {% else %}
+                                        <div class="project-placeholder bg-light d-flex align-items-center justify-content-center"
+                                             style="height: 200px;">
+                                            <i class="fas fa-code fa-3x text-muted"></i>
+                                        </div>
+                                    {% endif %}
+                                    <div class="project-overlay">
+                                        <a href="{{ path('app_project_show', {id: relatedProject.id}) }}"
+                                           class="btn btn-primary">
+                                            <i class="fas fa-eye me-2"></i>Voir le projet
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <h3 class="card-title h5">{{ relatedProject.title }}</h3>
+                                    <p class="card-text text-muted">
+                                        {{ relatedProject.description|slice(0, 100) }}{{ relatedProject.description|length > 100 ? '...' : '' }}
+                                    </p>
+
+                                    <div class="project-skills">
+                                        {% for skill in relatedProject.skills|slice(0, 3) %}
+                                            <span class="badge bg-light text-dark me-1">{{ skill.name }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

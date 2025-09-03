@@ -25,8 +25,8 @@ class ProjectController extends AbstractController
         $search = $request->query->get('search');
 
         $qb = $projectRepo->createQueryBuilder('p')
-            ->leftJoin('p.skills', 's')
-            ->orderBy('p.createdAt', 'DESC');
+            ->leftJoin('p.skill', 's')
+            ->orderBy('p.created_at', 'DESC');
 
         if ($skillFilter) {
             $qb->andWhere('s.name LIKE :skill')
@@ -41,7 +41,7 @@ class ProjectController extends AbstractController
         $projects = $qb->getQuery()->getResult();
         $skills = $skillRepo->findAll();
 
-        return $this->render('projects/index.html.twig', [
+        return $this->render('project/index.html.twig', [
             'projects' => $projects,
             'skills' => $skills,
             'currentSkill' => $skillFilter,
@@ -63,13 +63,13 @@ class ProjectController extends AbstractController
 
         // Testimonials spécifiques à ce projet
         $testimonials = $testimonialRepo->createQueryBuilder('t')
-            ->where('t.relatedProject = :project')
+            ->where('t.project = :project')
             ->setParameter('project', $project)
-            ->orderBy('t.createdAt', 'DESC')
+            ->orderBy('t.created_at', 'DESC')
             ->getQuery()
             ->getResult();
 
-        return $this->render('projects/show.html.twig', [
+        return $this->render('project/show.html.twig', [
             'project' => $project,
             'relatedProjects' => $relatedProjects,
             'testimonials' => $testimonials
