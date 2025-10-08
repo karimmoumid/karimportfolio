@@ -1,0 +1,318 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block admin_content %}
+    <div class="dashboard-header mb-4">
+        <div class="row align-items-center">
+            <div class="col">
+                <h1 class="dashboard-title mb-2">
+                    <i class="fas fa-tachometer-alt text-primary me-2"></i>
+                    Dashboard
+                </h1>
+                <p class="text-muted mb-0">
+                    Bienvenue {{ app.user.name }}, voici un aperçu de votre portfolio
+                </p>
+            </div>
+            <div class="col-auto">
+                <div class="d-flex gap-2">
+                    <a href="{{ path('app_home') }}" class="btn btn-outline-primary" target="_blank">
+                        <i class="fas fa-external-link-alt me-2"></i>Voir le site
+                    </a>
+                    <button class="btn btn-primary" onclick="location.reload()">
+                        <i class="fas fa-sync-alt me-2"></i>Actualiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card bg-primary">
+                <div class="stats-icon">
+                    <i class="fas fa-folder"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>{{ stats.totalProjects }}</h3>
+                    <p>Projets</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card bg-success">
+                <div class="stats-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>{{ stats.totalViews }}</h3>
+                    <p>Vues totales</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card bg-info">
+                <div class="stats-icon">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>{{ stats.unreadMessages }}</h3>
+                    <p>Messages non lus</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+            <div class="stats-card bg-warning">
+                <div class="stats-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stats-content">
+                    <h3>{{ stats.totalSkills }}</h3>
+                    <p>Compétences</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Recent Activity -->
+    <div class="row g-4">
+        <!-- Recent Projects -->
+        <div class="col-lg-6">
+            <div class="dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clock me-2"></i>Projets récents
+                    </h5>
+                    <a href="{{ path('admin_projects') }}" class="btn btn-sm btn-outline-primary">
+                        Voir tout
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recentProjects %}
+                        {% for project in recentProjects %}
+                            <div class="recent-item">
+                                <div class="d-flex align-items-center">
+                                    <div class="recent-icon bg-primary mx-2">
+                                        <i class="fas fa-folder"></i>
+                                    </div>
+                                    <div class="recent-content flex-grow-1">
+                                        <h6 class="mb-1">{{ project.title }}</h6>
+                                        <small class="text-muted">
+                                            <i class="fas fa-eye me-1"></i>{{ project.viewCount }} vues
+                                            • {{ project.createdAt|date('d/m/Y') }}
+                                        </small>
+                                    </div>
+                                    <div class="recent-actions">
+                                        <a href="{{ path('admin_project_edit', {id: project.id}) }}"
+                                           class="btn btn-sm btn-outline-secondary mx-2">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-folder-open fa-2x mb-2"></i>
+                            <p>Aucun projet pour le moment</p>
+                            <a href="{{ path('admin_project_new') }}" class="btn btn-primary">
+                                Créer le premier projet
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Messages -->
+        <div class="col-lg-6">
+            <div class="dashboard-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-envelope me-2"></i>Messages récents
+                    </h5>
+                    <a href="{{ path('admin_messages') }}" class="btn btn-sm btn-outline-primary">
+                        Voir tout
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recentMessages %}
+                        {% for message in recentMessages %}
+                            <div class="recent-item">
+                                <div class="d-flex align-items-start">
+                                    <div class="recent-icon {{ message.readAt ? 'bg-secondary' : 'bg-warning' }} mx-2">
+                                        <i class="fas fa-{{ message.readAt ? 'envelope-open' : 'envelope' }}"></i>
+                                    </div>
+                                    <div class="recent-content flex-grow-1">
+                                        <h6 class="mb-1">{{ message.subject }}</h6>
+                                        <p class="mb-1 text-muted small">{{ message.senderName }}</p>
+                                        <small class="text-muted">
+                                            {{ message.createdAt|date('d/m/Y H:i') }}
+                                        </small>
+                                    </div>
+                                    <div class="recent-actions">
+                                        <a href="{{ path('admin_message_show', {id: message.id}) }}"
+                                           class="btn btn-sm btn-outline-secondary mx-2">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-3">
+                            <i class="fas fa-inbox fa-2x mb-2"></i>
+                            <p>Aucun message reçu</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-4 mt-2">
+        <div class="col-12">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt me-2"></i>Actions rapides
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_project_new') }}" class="quick-action-btn">
+                                <i class="fas fa-plus"></i>
+                                <span>Nouveau projet</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_skill_new') }}" class="quick-action-btn">
+                                <i class="fas fa-star"></i>
+                                <span>Nouvelle compétence</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_messages') }}" class="quick-action-btn">
+                                <i class="fas fa-envelope"></i>
+                                <span>Voir messages</span>
+                            </a>
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{{ path('admin_profile') }}" class="quick-action-btn">
+                                <i class="fas fa-user"></i>
+                                <span>Mon profil</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .dashboard-title {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .stats-card {
+            border-radius: 15px;
+            padding: 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .stats-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+            opacity: 0.8;
+        }
+
+        .stats-content h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .stats-content p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border: none;
+        }
+
+        .dashboard-card .card-header {
+            background: transparent;
+            border-bottom: 1px solid #e9ecef;
+            padding: 1.25rem;
+        }
+
+        .recent-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .recent-item:last-child {
+            border-bottom: none;
+        }
+
+        .recent-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-right: 1rem;
+        }
+
+        .quick-action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #495057;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action-btn:hover {
+            background: #e9ecef;
+            color: #007bff;
+            transform: translateY(-2px);
+        }
+
+        .quick-action-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats-card {
+                text-align: center;
+                flex-direction: column;
+            }
+
+            .stats-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+{% endblock %}

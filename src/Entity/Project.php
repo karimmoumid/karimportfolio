@@ -60,6 +60,7 @@ class Project
         $this->images = new ArrayCollection();
         $this->skill = new ArrayCollection();
         $this->testimonial = new ArrayCollection();
+        $this->created_at = new \DateTimeImmutable();
     }
 
     public function getId(): ?int

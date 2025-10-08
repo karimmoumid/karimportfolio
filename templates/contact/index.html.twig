@@ -1,20 +1,139 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ContactController!{% endblock %}
+{% block title %}Contact - {{ parent() }}{% endblock %}
+{% block javascripts %}
+    <script src="{{ asset('js/contact.js') }}" defer></script>
+{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <!-- Header Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1 class="display-4 fw-bold text-primary mb-3">Contactez-moi</h1>
+                    <p class="lead text-muted">
+                        Vous avez un projet ? Une question ? N'hésitez pas à me contacter !
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <!-- Contact Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Contact Form -->
+                <div class="col-lg-8 mb-5">
+                    <div class="contact-form-wrapper">
+                        <h2 class="h3 mb-4">
+                            <i class="fas fa-paper-plane text-primary me-2"></i>
+                            Envoyez-moi un message
+                        </h2>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/var/www/html/src/Controller/ContactController.php</code></li>
-        <li>Your template at <code>/var/www/html/templates/contact/index.html.twig</code></li>
-    </ul>
-</div>
+                        {{ form_start(contactForm, {'attr': {'class': 'contact-form', 'novalidate': 'novalidate'}}) }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(contactForm.senderName) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form_row(contactForm.senderEmail) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(contactForm.company) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(contactForm.subject) }}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form_row(contactForm.content) }}
+                        </div>
+
+                        {# === AJOUT OBLIGATOIRE RGPD === #}
+                        <!-- Consentement RGPD obligatoire -->
+                        <div class="card bg-light border-primary mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title h6 text-primary">
+                                    <i class="fas fa-shield-alt me-2"></i>
+                                    Protection de vos données
+                                </h5>
+
+                                <!-- Checkbox de consentement OBLIGATOIRE -->
+                                <div class="form-check mb-3">
+                                    <input type="checkbox"
+                                           class="form-check-input"
+                                           id="rgpdConsent"
+                                           name="rgpdConsent"
+                                           required>
+                                    <label class="form-check-label" for="rgpdConsent">
+                                        <strong class="text-danger">*</strong>
+                                        J'accepte que mes données personnelles soient collectées et traitées
+                                        conformément à la <a href="{{ path('legal_privacy') }}" target="_blank">politique de confidentialité</a>.
+                                        Je comprends que mes données seront utilisées uniquement pour répondre
+                                        à ma demande et ne seront pas transmises à des tiers.
+                                    </label>
+                                </div>
+
+                                <!-- Informations sur le traitement des données -->
+                                <div class="alert alert-info small mb-0">
+                                    <p class="mb-2">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        <strong>Informations sur le traitement de vos données :</strong>
+                                    </p>
+                                    <ul class="mb-0">
+                                        <li>Responsable : Karim MOUMID - karimmoumid@gmail.com</li>
+                                        <li>Finalité : Répondre à votre demande de contact</li>
+                                        <li>Durée de conservation : 3 ans maximum</li>
+                                        <li>Droits : Accès, rectification, suppression, portabilité</li>
+                                        <li>Réclamation : Vous pouvez contacter la CNIL</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Informations complémentaires -->
+                        <div class="small text-muted mb-4">
+                            <p class="mb-1">
+                                <i class="fas fa-lock me-1"></i>
+                                Vos données sont traitées de manière sécurisée et confidentielle.
+                            </p>
+                            <p class="mb-1">
+                                <i class="fas fa-clock me-1"></i>
+                                Temps de réponse moyen : 24-48 heures
+                            </p>
+                            <p class="mb-0">
+                                <i class="fas fa-asterisk me-1 text-danger"></i>
+                                Les champs marqués d'un astérisque sont obligatoires
+                            </p>
+                        </div>
+
+                        <div class="text-center">
+                            {{ form_row(contactForm.submit, {
+                                'label': 'Envoyer mon message',
+                                'attr': {
+                                    'class': 'btn btn-primary btn-lg',
+                                    'onclick': 'return validateRGPD()'
+                                }
+                            }) }}
+                        </div>
+                        {{ form_end(contactForm) }}
+                    </div>
+                </div>
+
+                <!-- Contact Info (reste identique) -->
+                <div class="col-lg-4">
+                    <!-- ... votre code existant ... -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section (reste identique) -->
+    <!-- ... votre code existant ... -->
 {% endblock %}
+

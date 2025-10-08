@@ -41,7 +41,7 @@ class ProjectService
             // Si pas de skills, retourner les projets les plus récents
             return $this->projectRepository->findBy(
                 ['id' => ['$ne' => $project->getId()]], // Exclure le projet courant
-                ['createdAt' => 'DESC'],
+                ['created_at' => 'DESC'],
                 $limit
             );
         }
@@ -90,7 +90,7 @@ class ProjectService
     {
         return $this->projectRepository->findBy(
             [],
-            ['viewCount' => 'DESC'],
+            ['view_count' => 'DESC'],
             $limit
         );
     }

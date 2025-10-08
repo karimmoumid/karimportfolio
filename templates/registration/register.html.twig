@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="auth-wrapper">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="auth-card">
+                        <div class="auth-header text-center mb-4">
+                            <div class="auth-logo mb-3">
+                                <span class="brand-initial fs-1">KM</span>
+                            </div>
+                            <h1 class="h3 text-primary">Créer un compte</h1>
+                            <p class="text-muted">Rejoignez l'espace d'administration</p>
+                        </div>
+
+                        {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.name) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.email) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.plainPassword.first) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.plainPassword.second) }}
+                        </div>
+
+                        <div class="mb-4 form-check">
+                            {{ form_widget(registrationForm.agreeTerms) }}
+                            {{ form_label(registrationForm.agreeTerms) }}
+                        </div>
+
+                        {{ form_row(registrationForm.submit) }}
+                        {{ form_end(registrationForm) }}
+
+                        <div class="auth-footer text-center mt-4">
+                            <p class="text-muted">
+                                Déjà un compte ?
+                                <a href="{{ path('app_login') }}" class="text-decoration-none">
+                                    Se connecter
+                                </a>
+                            </p>
+                            <div class="mt-3">
+                                <a href="{{ path('app_home') }}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Retour au site
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .auth-wrapper {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: none;
+        }
+
+        .auth-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .form-check-input:checked {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+    </style>
+{% endblock %}

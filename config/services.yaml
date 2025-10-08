@@ -4,7 +4,14 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
-
+    # ✅ Convertir la variable d'environnement en paramètre Symfony
+    app.admin_email: '%env(APP_ADMIN_EMAIL)%'
+    app.siret: '%env(APP_SIRET)%'  # À définir dans .env
+    app.ape: '%env(APP_APE)%'
+    # Vos autres paramètres existants
+    app.uploads.projects: '%kernel.project_dir%/public/uploads/projects'
+    app.uploads.skills: '%kernel.project_dir%/public/uploads/skills'
+    app.uploads.projects.gallery: '%kernel.project_dir%/public/uploads/projects/gallery'
 services:
     # default configuration for services in *this* file
     _defaults:

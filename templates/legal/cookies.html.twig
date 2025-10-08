@@ -1,0 +1,257 @@
+{# templates/legal/cookies.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de Cookies - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="mb-4">Politique de Cookies</h1>
+                <p class="text-muted">Dernière mise à jour : {{ 'now'|date('d/m/Y') }}</p>
+
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-cookie-bite me-2"></i>
+                    Cette page vous explique comment nous utilisons les cookies et technologies similaires.
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">1. Qu'est-ce qu'un cookie ?</h2>
+                        <p>
+                            Un cookie est un petit fichier texte déposé sur votre ordinateur ou appareil mobile
+                            lors de la visite d'un site web. Il permet au site de mémoriser vos actions et préférences
+                            (connexion, langue, taille des caractères...) pendant une période donnée.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">2. Types de cookies utilisés</h2>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Nom</th>
+                                    <th>Finalité</th>
+                                    <th>Durée</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><span class="badge bg-success">Essentiels</span></td>
+                                    <td>PHPSESSID</td>
+                                    <td>Maintenir la session utilisateur</td>
+                                    <td>Session</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-success">Essentiels</span></td>
+                                    <td>csrf_token</td>
+                                    <td>Sécurité (protection CSRF)</td>
+                                    <td>Session</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-success">Essentiels</span></td>
+                                    <td>cookie_consent</td>
+                                    <td>Mémoriser votre choix de cookies</td>
+                                    <td>1 an</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-warning">Fonctionnels</span></td>
+                                    <td>user_preferences</td>
+                                    <td>Mémoriser vos préférences</td>
+                                    <td>1 an</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="badge bg-info">Analytiques</span></td>
+                                    <td>_ga, _gid</td>
+                                    <td>Google Analytics (si activé)</td>
+                                    <td>2 ans / 24h</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">3. Gestion de vos préférences</h2>
+
+                        <form id="cookiePreferencesForm">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="essentialCookies" checked disabled>
+                                <label class="form-check-label" for="essentialCookies">
+                                    <strong>Cookies essentiels</strong> <span class="badge bg-secondary">Toujours actifs</span>
+                                    <br>
+                                    <small class="text-muted">Nécessaires au fonctionnement du site</small>
+                                </label>
+                            </div>
+
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="functionalCookies">
+                                <label class="form-check-label" for="functionalCookies">
+                                    <strong>Cookies fonctionnels</strong>
+                                    <br>
+                                    <small class="text-muted">Améliorent votre expérience utilisateur</small>
+                                </label>
+                            </div>
+
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" id="analyticsCookies">
+                                <label class="form-check-label" for="analyticsCookies">
+                                    <strong>Cookies analytiques</strong>
+                                    <br>
+                                    <small class="text-muted">Nous aident à comprendre l'utilisation du site</small>
+                                </label>
+                            </div>
+
+                            <div class="mt-4">
+                                <button type="button" class="btn btn-success me-2" onclick="acceptAllCookies()">
+                                    Accepter tout
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary me-2" onclick="rejectOptionalCookies()">
+                                    Refuser les optionnels
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="savePreferences()">
+                                    Enregistrer mes préférences
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">4. Comment désactiver les cookies ?</h2>
+
+                        <p>Vous pouvez configurer votre navigateur pour refuser les cookies :</p>
+
+                        <div class="accordion" id="browserAccordion">
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#chrome">
+                                        <i class="fab fa-chrome me-2"></i> Google Chrome
+                                    </button>
+                                </h3>
+                                <div id="chrome" class="accordion-collapse collapse show" data-bs-parent="#browserAccordion">
+                                    <div class="accordion-body">
+                                        Paramètres → Confidentialité et sécurité → Cookies et autres données des sites
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#firefox">
+                                        <i class="fab fa-firefox me-2"></i> Mozilla Firefox
+                                    </button>
+                                </h3>
+                                <div id="firefox" class="accordion-collapse collapse" data-bs-parent="#browserAccordion">
+                                    <div class="accordion-body">
+                                        Paramètres → Vie privée et sécurité → Cookies et données de sites
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#safari">
+                                        <i class="fab fa-safari me-2"></i> Safari
+                                    </button>
+                                </h3>
+                                <div id="safari" class="accordion-collapse collapse" data-bs-parent="#browserAccordion">
+                                    <div class="accordion-body">
+                                        Préférences → Confidentialité → Cookies et données de sites web
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#edge">
+                                        <i class="fab fa-edge me-2"></i> Microsoft Edge
+                                    </button>
+                                </h3>
+                                <div id="edge" class="accordion-collapse collapse" data-bs-parent="#browserAccordion">
+                                    <div class="accordion-body">
+                                        Paramètres → Cookies et autorisations de site → Cookies et données de site
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning mt-3">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Attention :</strong> La désactivation de certains cookies peut affecter
+                            le fonctionnement du site.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">5. Contact</h2>
+                        <p>
+                            Pour toute question concernant notre utilisation des cookies, contactez-nous :
+                        </p>
+                        <ul>
+                            <li>Email : <a href="mailto:karimmoumid@gmail.com">karimmoumid@gmail.com</a></li>
+                            <li>Téléphone : +33 7 51 95 33 39</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Charger les préférences sauvegardées
+        document.addEventListener('DOMContentLoaded', function() {
+            const functionalCookies = localStorage.getItem('functionalCookies') === 'true';
+            const analyticsCookies = localStorage.getItem('analyticsCookies') === 'true';
+
+            document.getElementById('functionalCookies').checked = functionalCookies;
+            document.getElementById('analyticsCookies').checked = analyticsCookies;
+        });
+
+        function acceptAllCookies() {
+            document.getElementById('functionalCookies').checked = true;
+            document.getElementById('analyticsCookies').checked = true;
+            savePreferences();
+        }
+
+        function rejectOptionalCookies() {
+            document.getElementById('functionalCookies').checked = false;
+            document.getElementById('analyticsCookies').checked = false;
+            savePreferences();
+        }
+
+        function savePreferences() {
+            const functional = document.getElementById('functionalCookies').checked;
+            const analytics = document.getElementById('analyticsCookies').checked;
+
+            localStorage.setItem('functionalCookies', functional);
+            localStorage.setItem('analyticsCookies', analytics);
+            localStorage.setItem('cookiesAccepted', 'true');
+            localStorage.setItem('cookiesAcceptedDate', new Date().toISOString());
+
+            // Appliquer les préférences
+            if (analytics) {
+                // Activer Google Analytics si nécessaire
+                console.log('Analytics cookies activés');
+            }
+
+            alert('Vos préférences ont été enregistrées');
+
+            // Masquer la bannière si elle est visible
+            const banner = document.getElementById('cookieBanner');
+            if (banner) {
+                banner.style.display = 'none';
+            }
+        }
+    </script>
+{% endblock %}

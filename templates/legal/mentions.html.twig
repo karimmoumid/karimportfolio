@@ -1,0 +1,109 @@
+{# templates/legal/mentions.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mentions Légales - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="mb-4">Mentions Légales</h1>
+                <p class="text-muted">Dernière mise à jour : {{ 'now'|date('d/m/Y') }}</p>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">1. Éditeur du site</h2>
+
+                        {# Si vous êtes auto-entrepreneur/freelance #}
+                        <p>
+                            <strong>Nom :</strong> Karim MOUMID<br>
+                            <strong>Adresse :</strong> Deuil-la-Barre, 95170, France<br>
+                            <strong>Email :</strong> <a href="mailto:karimmoumid@gmail.com">karimmoumid@gmail.com</a><br>
+                            <strong>Téléphone :</strong> <a href="tel:+33751953339">+33 7 51 95 33 39</a><br>
+                            <strong>Directeur de publication :</strong> Karim MOUMID
+                        </p>
+
+                        {# Si vous êtes une société, décommentez et adaptez :
+                    <p>
+                        <strong>Raison sociale :</strong> [NOM DE LA SOCIÉTÉ]<br>
+                        <strong>Forme juridique :</strong> [SARL/SAS/EURL...]<br>
+                        <strong>Capital social :</strong> [MONTANT] €<br>
+                        <strong>RCS :</strong> [VILLE] [NUMÉRO]<br>
+                        <strong>SIRET :</strong> {{ siret }}<br>
+                        <strong>TVA intracommunautaire :</strong> FR [NUMÉRO]<br>
+                        <strong>Siège social :</strong> [ADRESSE COMPLÈTE]<br>
+                        <strong>Directeur de publication :</strong> [NOM PRÉNOM]
+                    </p>
+                        #}
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">2. Hébergeur</h2>
+                        <p>
+                            <strong>Nom :</strong> [Nom de votre hébergeur - Ex: OVH, Hostinger, etc.]<br>
+                            <strong>Raison sociale :</strong> [Raison sociale de l'hébergeur]<br>
+                            <strong>Adresse :</strong> [Adresse de l'hébergeur]<br>
+                            <strong>Téléphone :</strong> [Téléphone de l'hébergeur]<br>
+                            <strong>Site web :</strong> [URL de l'hébergeur]
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">3. Propriété intellectuelle</h2>
+                        <p>
+                            L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur
+                            et la propriété intellectuelle. Tous les droits de reproduction sont réservés, y compris pour les
+                            documents téléchargeables et les représentations iconographiques et photographiques.
+                        </p>
+                        <p>
+                            La reproduction de tout ou partie de ce site sur un support électronique ou papier est formellement
+                            interdite sauf autorisation écrite préalable de Karim MOUMID.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">4. Responsabilité</h2>
+                        <p>
+                            Les informations contenues sur ce site sont aussi précises que possible et le site est périodiquement
+                            remis à jour, mais peut toutefois contenir des inexactitudes, des omissions ou des lacunes.
+                        </p>
+                        <p>
+                            Karim MOUMID ne pourra être tenu responsable des dommages directs et indirects causés au matériel de
+                            l'utilisateur, lors de l'accès au site.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">5. Données personnelles</h2>
+                        <p>
+                            Le traitement des données personnelles collectées sur ce site est détaillé dans notre
+                            <a href="{{ path('legal_privacy') }}">Politique de Confidentialité</a>.
+                        </p>
+                        <p>
+                            Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression et
+                            d'opposition au traitement de vos données personnelles.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">6. Cookies</h2>
+                        <p>
+                            Ce site utilise des cookies. Pour en savoir plus sur leur utilisation et leur gestion, consultez
+                            notre <a href="{{ path('legal_cookies') }}">Politique de Cookies</a>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

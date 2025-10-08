@@ -4,6 +4,117 @@
 
 {% block meta_description %}{{ project.description }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Styles du carousel */
+        .carousel-item img {
+            height: 500px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .carousel-indicators {
+            margin-bottom: 1rem;
+        }
+
+        .carousel-indicators button {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: 0 5px;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 5%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        #projectCarousel:hover .carousel-control-prev,
+        #projectCarousel:hover .carousel-control-next {
+            opacity: 1;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            width: 30px;
+            height: 30px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+        }
+
+        /* Thumbnails */
+        .thumbnail-img {
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            height: 60px;
+            object-fit: cover;
+        }
+
+        .thumbnail-img:hover {
+            opacity: 1 !important;
+            border-color: var(--bs-primary);
+            transform: scale(1.05);
+        }
+
+        .thumbnail-img.active {
+            opacity: 1 !important;
+            border-color: var(--bs-primary);
+        }
+
+        /* Project card animations */
+        .project-card {
+            transition: transform 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .project-image {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 123, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .project-card:hover .project-overlay {
+            opacity: 1;
+        }
+
+        /* Lightbox */
+        .lightbox-img {
+            cursor: zoom-in;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .carousel-item img {
+                height: 300px !important;
+            }
+
+            .thumbnail-img {
+                height: 40px;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <!-- Project Header -->
     <section class="py-5 bg-light">
@@ -22,16 +133,16 @@
                     <p class="lead text-muted mb-4">{{ project.description }}</p>
 
                     <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <span class="text-muted me-3">
-                        <i class="fas fa-eye me-1"></i>{{ project.viewCount }} vues
-                    </span>
                         <span class="text-muted me-3">
-                        <i class="fas fa-calendar me-1"></i>{{ project.createdAt|date('d/m/Y') }}
-                    </span>
+                            <i class="fas fa-eye me-1"></i>{{ project.viewCount ?? 0 }} vues
+                        </span>
+                        <span class="text-muted me-3">
+                            <i class="fas fa-calendar me-1"></i>{{ project.createdAt|date('d/m/Y') }}
+                        </span>
                         {% if project.updatedAt and project.updatedAt != project.createdAt %}
                             <span class="text-muted">
-                            <i class="fas fa-edit me-1"></i>Mis à jour le {{ project.updatedAt|date('d/m/Y') }}
-                        </span>
+                                <i class="fas fa-edit me-1"></i>Mis à jour le {{ project.updatedAt|date('d/m/Y') }}
+                            </span>
                         {% endif %}
                     </div>
                 </div>
@@ -44,19 +155,105 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 mb-4">
-                    <!-- Project Image -->
-                    {% if project.image %}
+
+                    <!-- Gallery Carousel (priorité aux images de galerie) -->
+                    {% if project.images|length > 0 %}
+                        <div class="project-gallery-carousel mb-5">
+                            <div id="projectCarousel" class="carousel slide" data-bs-ride="carousel">
+
+                                <!-- Indicateurs -->
+                                {% if project.images|length > 1 %}
+                                    <div class="carousel-indicators">
+                                        {% for key, image in project.images %}
+                                            <button type="button"
+                                                    data-bs-target="#projectCarousel"
+                                                    data-bs-slide-to="{{ key }}"
+                                                    {% if loop.first %}class="active" aria-current="true"{% endif %}
+                                                    aria-label="Slide {{ loop.index }}">
+                                            </button>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <!-- Images du carousel -->
+                                <div class="carousel-inner rounded shadow">
+                                    {% for image in project.images %}
+                                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                            <img src="{{ asset('uploads/projects/gallery/' ~ image.filename) }}"
+                                                 class="d-block w-100 lightbox-img"
+                                                 alt="{{ image.altText ?? project.title ~ ' - Image ' ~ loop.index }}"
+                                                 data-bs-toggle="modal"
+                                                 data-bs-target="#lightboxModal"
+                                                 data-bs-img="{{ asset('uploads/projects/gallery/' ~ image.filename) }}">
+
+                                            <!-- Caption avec numéro et nom original -->
+                                            <div class="carousel-caption d-none d-md-block">
+                                                <div class="bg-dark bg-opacity-75 rounded px-3 py-2">
+                                                    <p class="mb-0">{{ image.originalName ?? 'Image ' ~ loop.index }} ({{ loop.index }}/{{ project.images|length }})</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <!-- Contrôles -->
+                                {% if project.images|length > 1 %}
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#projectCarousel" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Précédent</span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#projectCarousel" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="visually-hidden">Suivant</span>
+                                    </button>
+                                {% endif %}
+                            </div>
+
+                            <!-- Thumbnails -->
+                            {% if project.images|length > 1 %}
+                                <div class="carousel-thumbnails mt-3">
+                                    <div class="row g-2">
+                                        {% for key, image in project.images %}
+                                            {% if loop.index <= 12 %} {# Limiter à 12 thumbnails #}
+                                                <div class="col-2 col-md-1">
+                                                    <img src="{{ asset('uploads/projects/gallery/' ~ image.filename) }}"
+                                                         class="img-fluid rounded thumbnail-img {% if loop.first %}active{% endif %}"
+                                                         alt="Miniature {{ loop.index }}"
+                                                         data-bs-target="#projectCarousel"
+                                                         data-bs-slide-to="{{ key }}"
+                                                         style="opacity: 0.6;">
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if project.images|length > 12 %}
+                                            <div class="col-12 text-center mt-2">
+                                                <small class="text-muted">+{{ project.images|length - 12 }} autres images</small>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    {% elseif project.image %}
+                        <!-- Image principale seule si pas de galerie -->
                         <div class="project-image-main mb-5">
                             <img src="{{ asset('uploads/projects/' ~ project.image) }}"
-                                 class="img-fluid rounded shadow"
+                                 class="img-fluid rounded shadow lightbox-img"
                                  alt="{{ project.title }}"
-                                 style="width: 100%; max-height: 400px; object-fit: cover;">
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#lightboxModal"
+                                 data-bs-img="{{ asset('uploads/projects/' ~ project.image) }}"
+                                 style="width: 100%; max-height: 500px; object-fit: cover; cursor: zoom-in;">
                         </div>
                     {% endif %}
 
                     <!-- Project Description -->
                     <div class="project-description">
-                        <h2 class="h3 mb-4">Description du projet</h2>
+                        <h2 class="h3 mb-4">
+                            <i class="fas fa-info-circle text-primary me-2"></i>
+                            Description du projet
+                        </h2>
                         {% if project.fullDescription %}
                             <div class="content">
                                 {{ project.fullDescription|nl2br }}
@@ -68,58 +265,28 @@
                         {% endif %}
                     </div>
 
-                    <!-- Project Gallery -->
-                    {% if project.images|length > 0 %}
-                        <div class="project-gallery mt-5">
-                            <h3 class="h4 mb-4">Galerie d'images</h3>
-                            <div class="row g-3">
-                                {% for image in project.images %}
-                                    <div class="col-md-6 col-lg-4">
-                                        <img src="{{ asset('uploads/projects/' ~ image.filename) }}"
-                                             class="img-fluid rounded shadow-sm"
-                                             alt="{{ image.altText ?? project.title }}"
-                                             data-bs-toggle="modal"
-                                             data-bs-target="#imageModal{{ image.id }}"
-                                             style="cursor: pointer; height: 200px; width: 100%; object-fit: cover;">
-                                    </div>
-
-                                    <!-- Modal for image -->
-                                    <div class="modal fade" id="imageModal{{ image.id }}" tabindex="-1">
-                                        <div class="modal-dialog modal-lg modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">{{ image.altText ?? project.title }}</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body text-center">
-                                                    <img src="{{ asset('uploads/projects/' ~ image.filename) }}"
-                                                         class="img-fluid"
-                                                         alt="{{ image.altText ?? project.title }}">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endif %}
-
-                    <!-- Testimonials for this project -->
-                    {% if testimonials %}
+                    <!-- Testimonials -->
+                    {% if testimonials is defined and testimonials|length > 0 %}
                         <div class="project-testimonials mt-5">
-                            <h3 class="h4 mb-4">Témoignages sur ce projet</h3>
+                            <h3 class="h4 mb-4">
+                                <i class="fas fa-quote-left text-primary me-2"></i>
+                                Témoignages sur ce projet
+                            </h3>
                             <div class="row g-4">
                                 {% for testimonial in testimonials %}
                                     <div class="col-md-6">
-                                        <div class="card border-0 bg-light">
+                                        <div class="card border-0 bg-light h-100">
                                             <div class="card-body">
                                                 <div class="testimonial-rating mb-2 text-warning">
                                                     {% for i in 1..testimonial.rating %}
                                                         <i class="fas fa-star"></i>
                                                     {% endfor %}
+                                                    {% for i in (testimonial.rating + 1)..5 %}
+                                                        <i class="far fa-star"></i>
+                                                    {% endfor %}
                                                 </div>
                                                 <blockquote class="blockquote">
-                                                    <p>"{{ testimonial.content }}"</p>
+                                                    <p class="mb-3">"{{ testimonial.content }}"</p>
                                                 </blockquote>
                                                 <div class="testimonial-author">
                                                     <strong class="text-primary">{{ testimonial.authorName }}</strong>
@@ -139,37 +306,44 @@
                     {% endif %}
                 </div>
 
+                <!-- Sidebar -->
                 <div class="col-lg-4">
-                    <!-- Project Info Sidebar -->
-                    <div class="project-sidebar">
-                        <!-- Technologies Used -->
+                    <div class="project-sidebar sticky-top" style="top: 100px;">
+
+                        <!-- Technologies -->
                         {% if project.skill|length > 0 %}
                             <div class="card border-0 bg-light mb-4">
                                 <div class="card-body">
                                     <h4 class="card-title h5">
-                                        <i class="fas fa-tools text-primary me-2"></i>Technologies utilisées
+                                        <i class="fas fa-tools text-primary me-2"></i>
+                                        Technologies utilisées
                                     </h4>
                                     <div class="skills-list">
                                         {% for skill in project.skill %}
                                             <span class="badge bg-primary me-2 mb-2 fs-6">
-                                            {{ skill.name }}
-                                        </span>
+                                                {{ skill.name }}
+                                            </span>
                                         {% endfor %}
                                     </div>
                                 </div>
                             </div>
                         {% endif %}
 
-                        <!-- Project Stats -->
+                        <!-- Statistiques -->
                         <div class="card border-0 bg-light mb-4">
                             <div class="card-body">
                                 <h4 class="card-title h5">
-                                    <i class="fas fa-chart-bar text-primary me-2"></i>Statistiques
+                                    <i class="fas fa-chart-bar text-primary me-2"></i>
+                                    Statistiques
                                 </h4>
                                 <ul class="list-unstyled mb-0">
                                     <li class="mb-2">
                                         <i class="fas fa-eye text-muted me-2"></i>
-                                        <strong>{{ project.viewCount }}</strong> vues
+                                        <strong>{{ project.viewCount ?? 0 }}</strong> vues
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-images text-muted me-2"></i>
+                                        <strong>{{ project.images|length }}</strong> images
                                     </li>
                                     <li class="mb-2">
                                         <i class="fas fa-calendar text-muted me-2"></i>
@@ -185,15 +359,19 @@
                             </div>
                         </div>
 
-                        <!-- Contact CTA -->
+                        <!-- CTA Contact -->
                         <div class="card border-0 bg-primary text-white">
                             <div class="card-body text-center">
-                                <h4 class="card-title">Projet similaire ?</h4>
+                                <h4 class="card-title">
+                                    <i class="fas fa-rocket mb-3"></i>
+                                    <br>Projet similaire ?
+                                </h4>
                                 <p class="card-text">
                                     Vous avez un projet similaire en tête ? Discutons-en !
                                 </p>
                                 <a href="{{ path('app_contact') }}" class="btn btn-light">
-                                    <i class="fas fa-comments me-2"></i>Me contacter
+                                    <i class="fas fa-comments me-2"></i>
+                                    Me contacter
                                 </a>
                             </div>
                         </div>
@@ -204,36 +382,45 @@
     </section>
 
     <!-- Related Projects -->
-    {% if relatedProjects|length > 0 %}
+    {% if relatedProjects is defined and relatedProjects|length > 0 %}
         <section class="py-5 bg-light">
             <div class="container">
                 <div class="row">
                     <div class="col-12 mb-4">
-                        <h2 class="h3">Projets similaires</h2>
+                        <h2 class="h3">
+                            <i class="fas fa-th text-primary me-2"></i>
+                            Projets similaires
+                        </h2>
                         <p class="text-muted">Découvrez d'autres projets qui pourraient vous intéresser</p>
                     </div>
                 </div>
 
                 <div class="row g-4">
-                    {% for relatedProject in relatedProjects %}
+                    {% for relatedProject in relatedProjects|slice(0, 3) %}
                         <div class="col-lg-4">
-                            <div class="card project-card h-100 border-0">
+                            <div class="card project-card h-100 border-0 shadow-sm">
                                 <div class="project-image">
                                     {% if relatedProject.image %}
                                         <img src="{{ asset('uploads/projects/' ~ relatedProject.image) }}"
                                              class="card-img-top"
                                              alt="{{ relatedProject.title }}"
                                              style="height: 200px; object-fit: cover;">
+                                    {% elseif relatedProject.images|length > 0 %}
+                                        <img src="{{ asset('uploads/projects/gallery/' ~ relatedProject.images[0].filename) }}"
+                                             class="card-img-top"
+                                             alt="{{ relatedProject.title }}"
+                                             style="height: 200px; object-fit: cover;">
                                     {% else %}
-                                        <div class="project-placeholder bg-light d-flex align-items-center justify-content-center"
+                                        <div class="bg-light d-flex align-items-center justify-content-center"
                                              style="height: 200px;">
                                             <i class="fas fa-code fa-3x text-muted"></i>
                                         </div>
                                     {% endif %}
                                     <div class="project-overlay">
                                         <a href="{{ path('app_project_show', {id: relatedProject.id}) }}"
-                                           class="btn btn-primary">
-                                            <i class="fas fa-eye me-2"></i>Voir le projet
+                                           class="btn btn-light">
+                                            <i class="fas fa-eye me-2"></i>
+                                            Voir le projet
                                         </a>
                                     </div>
                                 </div>
@@ -241,13 +428,15 @@
                                 <div class="card-body">
                                     <h3 class="card-title h5">{{ relatedProject.title }}</h3>
                                     <p class="card-text text-muted">
-                                        {{ relatedProject.description|slice(0, 100) }}{{ relatedProject.description|length > 100 ? '...' : '' }}
+                                        {{ relatedProject.description|slice(0, 100) }}...
                                     </p>
-
                                     <div class="project-skills">
-                                        {% for skill in relatedProject.skills|slice(0, 3) %}
+                                        {% for skill in relatedProject.skill|slice(0, 3) %}
                                             <span class="badge bg-light text-dark me-1">{{ skill.name }}</span>
                                         {% endfor %}
+                                        {% if relatedProject.skill|length > 3 %}
+                                            <span class="badge bg-light text-dark">+{{ relatedProject.skill|length - 3 }}</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -257,4 +446,71 @@
             </div>
         </section>
     {% endif %}
+
+    <!-- Lightbox Modal -->
+    <div class="modal fade" id="lightboxModal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-transparent border-0">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close btn-close-white bg-dark rounded-circle p-2" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-0 text-center">
+                    <img id="lightboxImage" src="" class="img-fluid rounded" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Synchroniser les thumbnails avec le carousel
+            const carousel = document.getElementById('projectCarousel');
+            const thumbnails = document.querySelectorAll('.thumbnail-img');
+
+            if (carousel && thumbnails.length > 0) {
+                carousel.addEventListener('slid.bs.carousel', function (e) {
+                    thumbnails.forEach(thumb => thumb.classList.remove('active'));
+                    if (thumbnails[e.to]) {
+                        thumbnails[e.to].classList.add('active');
+                    }
+                });
+
+                // Click sur les thumbnails
+                thumbnails.forEach((thumb, index) => {
+                    thumb.addEventListener('click', function() {
+                        const carouselInstance = bootstrap.Carousel.getInstance(carousel);
+                        if (carouselInstance) {
+                            carouselInstance.to(index);
+                        }
+                    });
+                });
+            }
+
+            // Lightbox
+            const lightboxModal = document.getElementById('lightboxModal');
+            if (lightboxModal) {
+                lightboxModal.addEventListener('show.bs.modal', function (event) {
+                    const button = event.relatedTarget;
+                    const imgSrc = button.getAttribute('data-bs-img');
+                    const modalImg = document.getElementById('lightboxImage');
+                    if (modalImg && imgSrc) {
+                        modalImg.src = imgSrc;
+                    }
+                });
+            }
+
+            // Configuration du carousel
+            if (carousel) {
+                new bootstrap.Carousel(carousel, {
+                    interval: 5000,
+                    pause: 'hover',
+                    wrap: true,
+                    keyboard: true
+                });
+            }
+        });
+    </script>
 {% endblock %}

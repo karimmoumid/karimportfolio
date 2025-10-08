@@ -1,0 +1,169 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Gestion des compétences{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Compétences</li>
+{% endblock %}
+
+{% block admin_content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2">
+                <i class="fas fa-star text-primary me-2"></i>
+                Gestion des compétences
+            </h1>
+            <p class="text-muted mb-0">Gérez vos compétences techniques et technologies</p>
+        </div>
+
+        <div>
+            <a href="{{ path('admin_skill_new') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Nouvelle compétence
+            </a>
+        </div>
+    </div>
+
+    <!-- Skills Grid -->
+    <div class="row">
+        {% if skills %}
+            {% for skill in skills %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="skill-card card border-0 shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <div class="skill-icon mb-3">
+                                {% if skill.logo %}
+                                    <img src="{{ asset('uploads/skills/' ~ skill.logo) }}"
+                                         alt="{{ skill.name }}"
+                                         class="skill-logo">
+                                {% else %}
+                                    <i class="fas fa-code fa-2x text-primary"></i>
+                                {% endif %}
+                            </div>
+
+                            <h5 class="card-title mb-2">{{ skill.name }}</h5>
+
+                            <div class="skill-usage mb-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-project-diagram me-1"></i>
+                                    {{ skill.projects|length }} projet{{ skill.projects|length > 1 ? 's' : '' }}
+                                </small>
+                            </div>
+
+                            <div class="skill-actions">
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{{ path('admin_skill_edit', {id: skill.id}) }}"
+                                       class="btn btn-outline-primary"
+                                       title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form method="post"
+                                          action="{{ path('admin_skill_delete', {id: skill.id}) }}"
+                                          style="display:inline">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ skill.id) }}">
+                                        <button class="btn btn-outline-danger"
+                                                title="Supprimer"
+                                            {% if skill.projects|length > 0 %}
+                                            onclick="return confirm('Cette compétence est utilisée dans {{ skill.projects|length }} projet(s). Confirmer la suppression ?')"
+                                        {% else %}
+                                            onclick="return confirm('Confirmer la suppression de cette compétence ?')"
+                                            {% endif %}>
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Aucune compétence</h5>
+                    <p class="text-muted mb-4">Ajoutez vos premières compétences techniques</p>
+                    <a href="{{ path('admin_skill_new') }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i>Ajouter une compétence
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Skills Summary -->
+    {% if skills %}
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title">Total compétences</h5>
+                                <h2 class="mb-0">{{ skills|length }}</h2>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fas fa-star fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title">Avec logo</h5>
+                                <h2 class="mb-0">{{ skills|filter(s => s.logo)|length }}</h2>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fas fa-image fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h5 class="card-title">Utilisées</h5>
+                                <h2 class="mb-0">{{ skills|filter(s => s.projects|length > 0)|length }}</h2>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fas fa-check fa-2x opacity-75"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <style>
+        .skill-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        }
+
+        .skill-logo {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        .skill-icon {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Messages de contact{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Messages</li>
+{% endblock %}
+
+{% block admin_content %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-2">
+                <i class="fas fa-envelope text-primary me-2"></i>
+                Messages de contact
+            </h1>
+            <p class="text-muted mb-0">Gérez les messages reçus via le formulaire de contact</p>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-outline-secondary active" onclick="filterMessages('all')">
+                Tous ({{ messages|length }})
+            </button>
+            <button class="btn btn-outline-warning" onclick="filterMessages('unread')">
+                Non lus ({{ messages|filter(m => not m.readAt)|length }})
+            </button>
+            <button class="btn btn-outline-success" onclick="filterMessages('read')">
+                Lus ({{ messages|filter(m => m.readAt)|length }})
+            </button>
+        </div>
+    </div>
+
+    <!-- Messages Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">{{ messages|length }}</h3>
+                            <p class="mb-0">Messages total</p>
+                        </div>
+                        <i class="fas fa-envelope fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">{{ messages|filter(m => not m.readAt)|length }}</h3>
+                            <p class="mb-0">Non lus</p>
+                        </div>
+                        <i class="fas fa-envelope-open fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">{{ messages|filter(m => m.readAt)|length }}</h3>
+                            <p class="mb-0">Lus</p>
+                        </div>
+                        <i class="fas fa-check fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">{{ messages|filter(m => m.createdAt > date().modify('first day of this month'))|length }}</h3>
+                            <p class="mb-0">Ce mois-ci</p>
+                        </div>
+                        <i class="fas fa-calendar fa-2x opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages List -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white">
+            <h5 class="mb-0">Liste des messages</h5>
+        </div>
+
+        <div class="card-body p-0">
+            {% if messages %}
+                <div class="messages-list">
+                    {% for message in messages %}
+                        <div class="message-item {{ message.readAt ? 'read' : 'unread' }}"
+                             data-status="{{ message.readAt ? 'read' : 'unread' }}">
+                            <div class="d-flex align-items-start p-3">
+                                <div class="message-status me-3">
+                                    {% if message.readAt %}
+                                        <i class="fas fa-envelope-open text-success"></i>
+                                    {% else %}
+                                        <i class="fas fa-envelope text-warning"></i>
+                                    {% endif %}
+                                </div>
+
+                                <div class="message-content flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="message-header">
+                                            <h6 class="mb-0 {{ not message.readAt ? 'fw-bold' : '' }}">
+                                                {{ message.subject }}
+                                            </h6>
+                                            <div class="message-meta">
+                                                <span class="text-primary">{{ message.senderName }}</span>
+                                                {% if message.company %}
+                                                    <span class="text-muted">de {{ message.company }}</span>
+                                                {% endif %}
+                                                <span class="text-muted">• {{ message.createdAt|date('d/m/Y H:i') }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="message-actions">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ path('admin_message_show', {id: message.id}) }}"
+                                                   class="btn btn-outline-primary"
+                                                   title="Lire">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="mailto:{{ message.senderEmail }}?subject=Re: {{ message.subject }}"
+                                                   class="btn btn-outline-success"
+                                                   title="Répondre">
+                                                    <i class="fas fa-reply"></i>
+                                                </a>
+                                                <form method="post"
+                                                      action="{{ path('admin_message_delete', {id: message.id}) }}"
+                                                      style="display:inline">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ message.id) }}">
+                                                    <button class="btn btn-outline-danger"
+                                                            title="Supprimer"
+                                                            onclick="return confirm('Confirmer la suppression de ce message ?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="message-preview">
+                                        <p class="text-muted mb-0">
+                                            {{ message.content|length > 150 ?
+                                            message.content|slice(0, 150) ~ '...' :
+                                            message.content }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Aucun message</h5>
+                    <p class="text-muted">Vous n'avez reçu aucun message pour le moment</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function filterMessages(status) {
+            const messages = document.querySelectorAll('.message-item');
+            const buttons = document.querySelectorAll('.btn-group .btn');
+
+            // Reset button states
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            messages.forEach(message => {
+                if (status === 'all') {
+                    message.style.display = 'block';
+                } else {
+                    const messageStatus = message.getAttribute('data-status');
+                    message.style.display = messageStatus === status ? 'block' : 'none';
+                }
+            });
+        }
+    </script>
+
+    <style>
+        .message-item {
+            border-bottom: 1px solid #f1f1f1;
+            transition: background-color 0.2s ease;
+        }
+
+        .message-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .message-item.unread {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+
+        .message-item.read {
+            opacity: 0.8;
+        }
+
+        .message-meta {
+            font-size: 0.875rem;
+        }
+
+        .message-preview p {
+            line-height: 1.4;
+        }
+    </style>
+{% endblock %}

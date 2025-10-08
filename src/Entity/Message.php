@@ -25,14 +25,14 @@ class Message
     #[ORM\Column(length: 255)]
     private ?string $subject = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'text')]
     private ?string $content = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $created_at = null;
+    private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $read_at = null;
+    private ?\DateTimeImmutable $readAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     private ?User $sender = null;
@@ -104,24 +104,24 @@ class Message
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
     public function setCreatedAt(\DateTimeImmutable $created_at): static
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $created_at;
 
         return $this;
     }
 
     public function getReadAt(): ?\DateTimeImmutable
     {
-        return $this->read_at;
+        return $this->readAt;
     }
 
     public function setReadAt(?\DateTimeImmutable $read_at): static
     {
-        $this->read_at = $read_at;
+        $this->readAt = $read_at;
 
         return $this;
     }
@@ -154,7 +154,7 @@ class Message
     public function markAsRead(): static
     {
         if (!$this->readAt) {
-            $this->readAt = new \DateTime();
+            $this->readAt = new \DateTimeImmutable();
         }
         return $this;
     }
@@ -177,4 +177,9 @@ class Message
             return 'à l\'instant';
         }
     }
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
+
 }

@@ -1,0 +1,155 @@
+{# templates/legal/terms.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Conditions d'Utilisation - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="mb-4">Conditions Générales d'Utilisation</h1>
+                <p class="text-muted">Dernière mise à jour : {{ 'now'|date('d/m/Y') }}</p>
+
+                <div class="alert alert-warning mb-4">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    En utilisant ce site, vous acceptez sans réserve les présentes conditions générales d'utilisation.
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">Article 1 : Objet</h2>
+                        <p>
+                            Les présentes conditions générales d'utilisation (CGU) ont pour objet de définir les modalités
+                            et conditions d'utilisation du site web accessible à l'adresse [VOTRE-DOMAINE.COM],
+                            ainsi que de définir les droits et obligations des parties dans ce cadre.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">Article 2 : Mentions légales</h2>
+                        <p>
+                            Le site est édité par Karim MOUMID, dont les coordonnées complètes sont disponibles
+                            dans les <a href="{{ path('legal_mentions') }}">mentions légales</a>.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">Article 3 : Accès au site</h2>
+                        <p>
+                            Le site est accessible gratuitement à tout utilisateur disposant d'un accès à Internet.
+                            Tous les coûts afférents à l'accès au site, que ce soit les frais matériels, logiciels
+                            ou d'accès à Internet, sont exclusivement à la charge de l'utilisateur.
+                        </p>
+                        <p>
+                            L'éditeur met en œuvre tous les moyens raisonnables à sa disposition pour assurer un
+                            accès de qualité au site, mais n'est tenu à aucune obligation d'y parvenir.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">Article 4 : Propriété intellectuelle</h2>
+                        <p>
+                            Tous les éléments du site (textes, images, vidéos, structure, base de données, code source...)
+                            sont protégés par le droit d'auteur et sont la propriété exclusive de Karim MOUMID,
+                            sauf mention contraire.
+                        </p>
+                        <p>
+                            Toute reproduction, représentation, modification, publication, transmission, dénaturation,
+                            totale ou partielle du site ou de son contenu, par quelque procédé que ce soit, et sur
+                            quelque support que ce soit est interdite sans autorisation écrite préalable.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">Article 5 : Responsabilité</h2>
+
+                        <h3 class="h5 mt-3">5.1 Responsabilité de l'éditeur</h3>
+                        <p>
+                            Les informations publiées sur le site sont fournies à titre indicatif et général.
+                            L'éditeur ne garantit pas l'exactitude, la complétude ou l'actualité de ces informations.
+                        </p>
+
+                        <h3 class="h5 mt-3">5.2 Responsabilité de l'utilisateur</h3>
+                        <p>
+                            L'utilisateur est responsable de l'utilisation qu'il fait du site et de ses contenus.
+                            Il s'engage à :
+                        </p>
+                        <ul>
+                            <li>Ne pas utiliser le site à des fins illégales</li>
+                            <li>Ne pas porter atteinte à l'ordre public</li>
+                            <li>Ne pas violer les droits de tiers</li>
+                            <li>Ne pas diffuser de contenus illicites</li>
+                            <li>Ne pas perturber le fonctionnement du site</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">Article 6 : Données personnelles</h2>
+                        <p>
+                            Le traitement des données personnelles collectées sur le site est effectué conformément
+                            au Règlement Général sur la Protection des Données (RGPD). Pour plus d'informations,
+                            consultez notre <a href="{{ path('legal_privacy') }}">politique de confidentialité</a>.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">Article 7 : Cookies</h2>
+                        <p>
+                            Le site utilise des cookies. L'utilisateur peut paramétrer son navigateur pour refuser
+                            les cookies. Pour plus d'informations, consultez notre
+                            <a href="{{ path('legal_cookies') }}">politique de cookies</a>.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">Article 8 : Liens hypertextes</h2>
+                        <p>
+                            Le site peut contenir des liens vers d'autres sites. L'éditeur n'exerce aucun contrôle
+                            sur ces sites et décline toute responsabilité quant à leur contenu ou leur fonctionnement.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">Article 9 : Modification des CGU</h2>
+                        <p>
+                            L'éditeur se réserve le droit de modifier les présentes CGU à tout moment.
+                            Les utilisateurs seront informés de toute modification substantielle.
+                            L'utilisation continue du site après modification vaut acceptation des nouvelles CGU.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">Article 10 : Droit applicable et juridiction</h2>
+                        <p>
+                            Les présentes CGU sont régies par le droit français. En cas de litige et après échec
+                            de toute tentative de recherche d'une solution amiable, les tribunaux français seront
+                            seuls compétents.
+                        </p>
+                        <p>
+                            Pour toute question relative aux présentes CGU, vous pouvez nous contacter à :
+                            <a href="mailto:karimmoumid@gmail.com">karimmoumid@gmail.com</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

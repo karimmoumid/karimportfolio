@@ -12,7 +12,7 @@ class ContactService
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private MailerInterface $mailer,
+        private EmailService $emailService, // <-- ici on injecte EmailService
         private ParameterBagInterface $params,
         private LoggerInterface $logger
     ) {}
@@ -22,38 +22,38 @@ class ContactService
      */
     public function handleContactMessage(Message $message): void
     {
+        // Sauvegarde du message en base de données
+        $this->em->persist($message);
+        $this->em->flush();
+
+        // Tentative d'envoi email à l'admin
         try {
-            // Sauvegarder le message en base de données
-            $this->saveMessage($message);
-
-            // Envoyer une notification email à l'admin
             $this->sendNotificationToAdmin($message);
-
-            // Envoyer un accusé de réception au client
-            $this->sendConfirmationToSender($message);
-
-            $this->logger->info('Message de contact traité avec succès', [
-                'sender_email' => $message->getSenderEmail(),
-                'subject' => $message->getSubject()
-            ]);
-
         } catch (\Exception $e) {
-            $this->logger->error('Erreur lors du traitement du message de contact', [
+            $this->logger->error('Erreur email admin', [
                 'error' => $e->getMessage(),
                 'sender_email' => $message->getSenderEmail()
             ]);
-            throw $e;
         }
+
+        // Tentative d'envoi d'accusé de réception au client
+        try {
+            $this->sendConfirmationToSender($message);
+        } catch (\Exception $e) {
+            $this->logger->error('Erreur email client', [
+                'error' => $e->getMessage(),
+                'sender_email' => $message->getSenderEmail()
+            ]);
+        }
+
+        $this->logger->info('Message de contact traité', [
+            'sender_email' => $message->getSenderEmail(),
+            'subject' => $message->getSubject()
+        ]);
     }
 
-    /**
-     * Sauvegarde le message en base de données
-     */
-    private function saveMessage(Message $message): void
-    {
-        $this->em->persist($message);
-        $this->em->flush();
-    }
+
+
 
     /**
      * Envoie une notification à l'admin
@@ -62,155 +62,71 @@ class ContactService
     {
         $adminEmail = $this->params->get('app.admin_email') ?? 'karimmoumid@gmail.com';
 
-        $email = (new Email())
-            ->from('noreply@portfolio.com')
-            ->to($adminEmail)
-            ->subject('🔥 Nouveau message de contact - ' . $message->getSubject())
-            ->html($this->getAdminNotificationTemplate($message))
-            ->priority(Email::PRIORITY_HIGH);
+        try {
+            $this->emailService->sender(
+                'noreply@example.com',
+                $adminEmail,
+                '🔥 Nouveau message de contact - ' . $message->getSubject(),
+                'admin_notification', // nom du template Twig dans /templates/emails/admin_notification.html.twig
+                [
+                    'message' => $message
+                ]
+            );
 
-        $this->mailer->send($email);
+            $this->logger->info('Email admin envoyé avec succès', [
+                'to' => $adminEmail,
+                'subject' => $message->getSubject()
+            ]);
+        } catch (\Exception $e) {
+            $this->logger->error('Erreur envoi email admin', [
+                'to' => $adminEmail,
+                'subject' => $message->getSubject(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
     }
 
-    /**
-     * Envoie un accusé de réception au client
-     */
     private function sendConfirmationToSender(Message $message): void
     {
-        $email = (new Email())
-            ->from('noreply@portfolio.com')
-            ->to($message->getSenderEmail())
-            ->subject('✅ Accusé de réception - ' . $message->getSubject())
-            ->html($this->getConfirmationTemplate($message));
+        try {
+            $this->emailService->sender(
+                'noreply@example.com',
+                $message->getSenderEmail(),
+                '✅ Accusé de réception - ' . $message->getSubject(),
+                'client_confirmation', // nom du template Twig dans /templates/emails/client_confirmation.html.twig
+                [
+                    'message' => $message
+                ]
+            );
 
-        $this->mailer->send($email);
+            $this->logger->info('Email de confirmation envoyé avec succès', [
+                'to' => $message->getSenderEmail(),
+                'subject' => $message->getSubject()
+            ]);
+        } catch (\Exception $e) {
+            $this->logger->error('Erreur envoi email confirmation', [
+                'to' => $message->getSenderEmail(),
+                'subject' => $message->getSubject(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+        }
     }
+
+
+
 
     /**
      * Template email pour la notification admin
      */
-    private function getAdminNotificationTemplate(Message $message): string
-    {
-        return sprintf('
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                    .header { background: #007bff; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-                    .content { background: #f8f9fa; padding: 20px; border-radius: 0 0 5px 5px; }
-                    .info-row { margin: 10px 0; padding: 10px; background: white; border-radius: 3px; }
-                    .label { font-weight: bold; color: #007bff; }
-                    .message-content { background: #e9ecef; padding: 15px; border-radius: 5px; margin: 15px 0; }
-                    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h2>🔥 Nouveau message de contact</h2>
-                    </div>
-                    <div class="content">
-                        <div class="info-row">
-                            <span class="label">De :</span> %s (%s)
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Entreprise :</span> %s
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Sujet :</span> %s
-                        </div>
-                        <div class="info-row">
-                            <span class="label">Date :</span> %s
-                        </div>
-
-                        <div class="message-content">
-                            <div class="label">Message :</div>
-                            <p>%s</p>
-                        </div>
-                    </div>
-                    <div class="footer">
-                        <p>Message reçu via le formulaire de contact du portfolio</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-        ',
-            htmlspecialchars($message->getSenderName()),
-            htmlspecialchars($message->getSenderEmail()),
-            htmlspecialchars($message->getCompany() ?? 'Non renseignée'),
-            htmlspecialchars($message->getSubject()),
-            $message->getCreatedAt()->format('d/m/Y à H:i'),
-            nl2br(htmlspecialchars($message->getContent()))
-        );
-    }
-
-    /**
-     * Template email pour l'accusé de réception
-     */
-    private function getConfirmationTemplate(Message $message): string
-    {
-        return sprintf('
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-                    .header { background: #28a745; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
-                    .content { background: #f8f9fa; padding: 20px; border-radius: 0 0 5px 5px; }
-                    .highlight { background: #e9ecef; padding: 15px; border-radius: 5px; margin: 15px 0; }
-                    .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #666; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <div class="header">
-                        <h2>✅ Message bien reçu !</h2>
-                    </div>
-                    <div class="content">
-                        <p>Bonjour <strong>%s</strong>,</p>
-
-                        <p>Merci pour votre message concernant : <strong>%s</strong></p>
-
-                        <div class="highlight">
-                            <p>Votre message a été reçu le <strong>%s</strong> et je m\'efforce de répondre à tous les messages dans les <strong>24 heures</strong>.</p>
-                        </div>
-
-                        <p>En attendant, n\'hésitez pas à :</p>
-                        <ul>
-                            <li>Consulter mes projets sur mon portfolio</li>
-                            <li>Me suivre sur <a href="https://github.com/karimmoumid">GitHub</a> ou <a href="https://www.linkedin.com/in/karim-moumid-0a0312104/">LinkedIn</a></li>
-                            <li>M\'appeler directement au +33 7 51 95 33 39</li>
-                        </ul>
-
-                        <p>À très bientôt !</p>
-                        <p><strong>Karim MOUMID</strong><br>
-                        Développeur Web Full-Stack</p>
-                    </div>
-                    <div class="footer">
-                        <p>Ceci est un message automatique, merci de ne pas y répondre.</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-        ',
-            htmlspecialchars($message->getSenderName()),
-            htmlspecialchars($message->getSubject()),
-            $message->getCreatedAt()->format('d/m/Y à H:i')
-        );
-    }
-
     /**
      * Marque un message comme lu
      */
     public function markAsRead(Message $message): void
     {
         if (!$message->getReadAt()) {
-            $message->setReadAt(new \DateTime());
+            $message->setReadAt(new \DateTimeImmutable());
             $this->em->flush();
         }
     }
@@ -249,7 +165,7 @@ class ContactService
         // Messages du mois
         $thisMonth = $qb->select('COUNT(m.id)')
             ->where('m.createdAt >= :startOfMonth')
-            ->setParameter('startOfMonth', new \DateTime('first day of this month'))
+            ->setParameter('startOfMonth', new \DateTimeImmutable('first day of this month'))
             ->getQuery()
             ->getSingleScalarResult();
 

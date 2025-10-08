@@ -1,0 +1,266 @@
+{# templates/legal/privacy.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de Confidentialité - {{ parent() }}{% endblock %}
+
+{% block body %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="mb-4">Politique de Confidentialité</h1>
+                <p class="text-muted">Dernière mise à jour : {{ 'now'|date('d/m/Y') }}</p>
+
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Cette politique de confidentialité vous informe sur la manière dont vos données personnelles
+                    sont collectées et traitées lorsque vous utilisez ce site web.
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">1. Responsable du traitement</h2>
+                        <p>
+                            <strong>Identité :</strong> Karim MOUMID<br>
+                            <strong>Adresse :</strong> Deuil-la-Barre, 95170, France<br>
+                            <strong>Email :</strong> karimmoumid@gmail.com<br>
+                            <strong>Téléphone :</strong> +33 7 51 95 33 39<br>
+                            <strong>Délégué à la protection des données (DPO) :</strong> karimmoumid@gmail.com
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">2. Données collectées</h2>
+
+                        <h3 class="h5 mt-4">Via le formulaire de contact :</h3>
+                        <ul>
+                            <li><strong>Nom</strong> (obligatoire)</li>
+                            <li><strong>Email</strong> (obligatoire)</li>
+                            <li><strong>Entreprise</strong> (facultatif)</li>
+                            <li><strong>Sujet du message</strong> (obligatoire)</li>
+                            <li><strong>Message</strong> (obligatoire)</li>
+                        </ul>
+
+                        <h3 class="h5 mt-4">Données collectées automatiquement :</h3>
+                        <ul>
+                            <li><strong>Adresse IP</strong></li>
+                            <li><strong>Date et heure de soumission</strong></li>
+                            <li><strong>Pages visitées</strong></li>
+                            <li><strong>Type de navigateur</strong></li>
+                            <li><strong>Système d'exploitation</strong></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">3. Finalités du traitement</h2>
+                        <p>Vos données personnelles sont collectées pour :</p>
+                        <ul>
+                            <li>Répondre à vos demandes de contact</li>
+                            <li>Gérer la relation client/prospect</li>
+                            <li>Envoyer des informations sur nos services (avec votre consentement)</li>
+                            <li>Améliorer notre site web et nos services</li>
+                            <li>Respecter nos obligations légales</li>
+                            <li>Prévenir la fraude et assurer la sécurité du site</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">4. Base légale</h2>
+                        <p>Le traitement de vos données repose sur :</p>
+                        <ul>
+                            <li><strong>Votre consentement</strong> (article 6.1.a du RGPD) pour le formulaire de contact</li>
+                            <li><strong>L'exécution d'un contrat</strong> (article 6.1.b du RGPD) pour les clients</li>
+                            <li><strong>L'intérêt légitime</strong> (article 6.1.f du RGPD) pour l'amélioration du site</li>
+                            <li><strong>L'obligation légale</strong> (article 6.1.c du RGPD) pour la conservation de certaines données</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">5. Durée de conservation</h2>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Type de données</th>
+                                <th>Durée de conservation</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Messages de contact</td>
+                                <td>3 ans après le dernier contact</td>
+                            </tr>
+                            <tr>
+                                <td>Données de prospects</td>
+                                <td>3 ans après la collecte</td>
+                            </tr>
+                            <tr>
+                                <td>Données de clients</td>
+                                <td>5 ans après la fin de la relation commerciale</td>
+                            </tr>
+                            <tr>
+                                <td>Cookies</td>
+                                <td>13 mois maximum</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">6. Vos droits</h2>
+                        <p>Conformément au RGPD, vous disposez des droits suivants :</p>
+
+                        <div class="accordion" id="rightsAccordion">
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#right1">
+                                        <i class="fas fa-eye me-2"></i> Droit d'accès
+                                    </button>
+                                </h3>
+                                <div id="right1" class="accordion-collapse collapse show" data-bs-parent="#rightsAccordion">
+                                    <div class="accordion-body">
+                                        Vous pouvez obtenir la confirmation que des données vous concernant sont traitées et
+                                        demander une copie de ces données.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#right2">
+                                        <i class="fas fa-edit me-2"></i> Droit de rectification
+                                    </button>
+                                </h3>
+                                <div id="right2" class="accordion-collapse collapse" data-bs-parent="#rightsAccordion">
+                                    <div class="accordion-body">
+                                        Vous pouvez demander la correction de vos données personnelles si elles sont inexactes ou incomplètes.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#right3">
+                                        <i class="fas fa-trash me-2"></i> Droit à l'effacement
+                                    </button>
+                                </h3>
+                                <div id="right3" class="accordion-collapse collapse" data-bs-parent="#rightsAccordion">
+                                    <div class="accordion-body">
+                                        Vous pouvez demander l'effacement de vos données personnelles ("droit à l'oubli").
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#right4">
+                                        <i class="fas fa-hand-paper me-2"></i> Droit à la limitation
+                                    </button>
+                                </h3>
+                                <div id="right4" class="accordion-collapse collapse" data-bs-parent="#rightsAccordion">
+                                    <div class="accordion-body">
+                                        Vous pouvez demander la limitation du traitement de vos données dans certains cas.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#right5">
+                                        <i class="fas fa-download me-2"></i> Droit à la portabilité
+                                    </button>
+                                </h3>
+                                <div id="right5" class="accordion-collapse collapse" data-bs-parent="#rightsAccordion">
+                                    <div class="accordion-body">
+                                        Vous pouvez recevoir vos données dans un format structuré et les transmettre à un autre responsable.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#right6">
+                                        <i class="fas fa-ban me-2"></i> Droit d'opposition
+                                    </button>
+                                </h3>
+                                <div id="right6" class="accordion-collapse collapse" data-bs-parent="#rightsAccordion">
+                                    <div class="accordion-body">
+                                        Vous pouvez vous opposer au traitement de vos données pour des raisons légitimes.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-success mt-3">
+                            <p class="mb-0">
+                                <strong>Pour exercer vos droits :</strong><br>
+                                Contactez-nous à : <a href="mailto:karimmoumid@gmail.com">karimmoumid@gmail.com</a><br>
+                                Merci de joindre une copie de votre pièce d'identité.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">7. Destinataires des données</h2>
+                        <p>Vos données peuvent être transmises à :</p>
+                        <ul>
+                            <li>Notre personnel autorisé</li>
+                            <li>Notre hébergeur web (pour le stockage)</li>
+                            <li>Les autorités compétentes sur demande légale</li>
+                        </ul>
+                        <p class="text-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Vos données ne sont jamais vendues à des tiers.</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">8. Sécurité des données</h2>
+                        <p>
+                            Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour
+                            protéger vos données personnelles contre la destruction, la perte, l'altération,
+                            la divulgation non autorisée ou l'accès non autorisé.
+                        </p>
+                        <ul>
+                            <li>Chiffrement SSL/TLS pour les transmissions</li>
+                            <li>Mots de passe hashés et salés</li>
+                            <li>Accès restreint aux données</li>
+                            <li>Mises à jour de sécurité régulières</li>
+                            <li>Sauvegardes régulières</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="h4 text-primary mb-3">9. Réclamation</h2>
+                        <p>
+                            Si vous estimez que le traitement de vos données personnelles constitue une violation du RGPD,
+                            vous avez le droit d'introduire une réclamation auprès de l'autorité de contrôle :
+                        </p>
+                        <address class="bg-light p-3 rounded">
+                            <strong>Commission Nationale de l'Informatique et des Libertés (CNIL)</strong><br>
+                            3 Place de Fontenoy<br>
+                            TSA 80715<br>
+                            75334 PARIS CEDEX 07<br>
+                            Téléphone : 01 53 73 22 22<br>
+                            Site web : <a href="https://www.cnil.fr" target="_blank">www.cnil.fr</a>
+                        </address>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

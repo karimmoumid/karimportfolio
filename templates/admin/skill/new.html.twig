@@ -1,0 +1,95 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Nouvelle compétence{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ path('admin_skills') }}">Compétences</a></li>
+    <li class="breadcrumb-item active">Nouvelle</li>
+{% endblock %}
+
+{% block admin_content %}
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-star text-primary me-2"></i>
+                        Ajouter une compétence
+                    </h5>
+                </div>
+
+                <div class="card-body">
+                    {{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+                    <div class="mb-3">
+                        {{ form_row(form.name) }}
+                        <div class="form-text">
+                            <i class="fas fa-lightbulb me-1"></i>
+                            Exemples : PHP 8.4, Symfony 7.3, JavaScript ES6+, Docker, etc.
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form_row(form.logoFile) }}
+                        <div class="logo-preview mt-2" id="logoPreview" style="display: none;">
+                            <img id="previewImg" class="rounded" style="max-width: 100px; max-height: 100px;">
+                        </div>
+                    </div>
+
+                    <!-- Suggestions populaires -->
+                    <div class="mb-4">
+                        <label class="form-label">Suggestions populaires</label>
+                        <div class="popular-skills">
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillSkill('PHP 8.4')">PHP 8.4</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillSkill('Symfony 7.3')">Symfony 7.3</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillSkill('JavaScript ES6+')">JavaScript ES6+</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillSkill('React')">React</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillSkill('Vue.js')">Vue.js</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillSkill('MySQL')">MySQL</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillSkill('Docker')">Docker</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-2 mb-2" onclick="fillSkill('Git/GitHub')">Git/GitHub</button>
+                        </div>
+                        <small class="text-muted">Cliquez sur une suggestion pour pré-remplir le nom</small>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ path('admin_skills') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Annuler
+                        </a>
+                        {{ form_row(form.submit) }}
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Preview logo
+            const logoInput = document.querySelector('input[type="file"]');
+            const logoPreview = document.getElementById('logoPreview');
+            const previewImg = document.getElementById('previewImg');
+
+            if (logoInput) {
+                logoInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImg.src = e.target.result;
+                            logoPreview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        logoPreview.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        function fillSkill(skillName) {
+            document.querySelector('[name="skill[name]"]').value = skillName;
+            document.querySelector('[name="skill[name]"]').focus();
+        }
+    </script>
+{% endblock %}

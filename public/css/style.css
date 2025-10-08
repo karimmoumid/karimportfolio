@@ -11,7 +11,7 @@
 
 body {
   font-family: "Inter", sans-serif;
-  padding-top: 76px;
+  padding-top: 55px;
   line-height: 1.6;
 }
 
@@ -162,7 +162,7 @@ body {
     font-size: 2rem;
   }
   body {
-    padding-top: 70px;
+    padding-top: 55px;
   }
 }
 

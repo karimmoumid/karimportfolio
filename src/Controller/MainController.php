@@ -37,4 +37,32 @@ final class MainController extends AbstractController
     {
         return $this->render('main/about.html.twig');
     }
+
+
+    #[Route('/mentions-legales', name: 'legal_mentions')]
+    public function mentions(): Response
+    {
+        return $this->render('legal/mentions.html.twig', [
+            'siret' => $this->getParameter('app.siret'),
+            'ape' => $this->getParameter('app.ape'),
+        ]);
+    }
+
+    #[Route('/politique-confidentialite', name: 'legal_privacy')]
+    public function privacy(): Response
+    {
+        return $this->render('legal/privacy.html.twig');
+    }
+
+    #[Route('/conditions-utilisation', name: 'legal_terms')]
+    public function terms(): Response
+    {
+        return $this->render('legal/terms.html.twig');
+    }
+
+    #[Route('/cookies', name: 'legal_cookies')]
+    public function cookies(): Response
+    {
+        return $this->render('legal/cookies.html.twig');
+    }
 }
