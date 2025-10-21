@@ -4,12 +4,12 @@
 
 {% block body %}
     <!-- Hero Section -->
-    <section class="hero-section">
+    <section class="hero-section" role="region" aria-labelledby="hero-title">
         <div class="container">
             <div class="row align-items-center min-vh-100">
                 <div class="col-lg-6">
                     <div class="hero-content">
-                        <h1 class="hero-title">
+                        <h1 id="hero-title" class="hero-title">
                             Bonjour, je suis<br>
                             <span class="text-white">Karim MOUMID</span>
                         </h1>
@@ -18,25 +18,25 @@
                             web innovantes et performantes. Spécialisé en <strong>Symfony</strong>,
                             <strong>PHP</strong> et <strong>JavaScript</strong>.
                         </p>
-                        <div class="hero-skills mb-4">
+                        <div class="hero-skills mb-4" role="list" aria-label="Compétences principales">
                             {% for skill in skills|slice(0, 6) %}
-                                <span class="badge bg-light text-primary me-2 mb-2 fs-6">{{ skill.name }}</span>
+                                <span class="badge bg-light text-primary me-2 mb-2 fs-6" role="listitem">{{ skill.name }}</span>
                             {% endfor %}
                         </div>
                         <div class="hero-buttons">
-                            <a href="{{ path('app_projects') }}" class="btn btn-light btn-lg me-3">
-                                <i class="fas fa-code me-2"></i>Voir mes projets
+                            <a href="{{ path('app_projects') }}" class="btn btn-light btn-lg me-3" aria-label="Voir mes projets">
+                                <i class="fas fa-code me-2" aria-hidden="true"></i>Voir mes projets
                             </a>
-                            <a href="{{ path('app_contact') }}" class="btn btn-outline-light btn-lg">
-                                <i class="fas fa-envelope me-2"></i>Me contacter
+                            <a href="{{ path('app_contact') }}" class="btn btn-outline-light btn-lg" aria-label="Me contacter">
+                                <i class="fas fa-envelope me-2" aria-hidden="true"></i>Me contacter
                             </a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-6 text-center">
-                    <div class="hero-image">
+                    <div class="hero-image" role="img" aria-label="Portrait symbolique de Karim Moumid, développeur Full-Stack">
                         <div class="profile-card bg-white rounded-4 shadow-lg p-4 d-inline-block">
-                            <div class="profile-avatar mb-3">
+                            <div class="profile-avatar mb-3" aria-hidden="true">
                                 <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center"
                                      style="width: 150px; height: 150px; border-radius: 50%; font-size: 3rem; font-weight: 700; margin: 0 auto;">
                                     KM
@@ -44,7 +44,7 @@
                             </div>
                             <h3 class="text-primary mb-2">Développeur Full-Stack</h3>
                             <p class="text-muted mb-0">
-                                <i class="fas fa-map-marker-alt me-1"></i>
+                                <i class="fas fa-map-marker-alt me-1" aria-hidden="true"></i>
                                 Deuil-la-Barre, France
                             </p>
                         </div>
@@ -56,11 +56,11 @@
 
     <!-- Featured Projects Section -->
     {% if featuredProjects %}
-        <section class="py-5">
+        <section class="py-5" role="region" aria-labelledby="featured-projects-title">
             <div class="container">
                 <div class="row">
                     <div class="col-12 text-center">
-                        <h2 class="section-title">Projets en vedette</h2>
+                        <h2 id="featured-projects-title" class="section-title">Projets en vedette</h2>
                         <p class="lead text-muted mb-5">
                             Découvrez une sélection de mes réalisations les plus consultées
                         </p>
@@ -70,61 +70,62 @@
                 <div class="row g-4">
                     {% for project in featuredProjects %}
                         <div class="col-lg-4 mb-4">
-                            <div class="card project-card h-100 border-0">
-                                <div class="project-image">
+                            <article class="card project-card h-100 border-0" role="article" aria-labelledby="project-title-{{ project.id }}">
+                                <div class="project-image position-relative">
                                     {% if project.image %}
                                         <img src="{{ asset('uploads/projects/' ~ project.image) }}"
                                              class="card-img-top"
-                                             alt="{{ project.title }}"
+                                             alt="Aperçu du projet {{ project.title }}"
                                              style="height: 200px; object-fit: cover;">
                                     {% else %}
                                         <div class="project-placeholder bg-light d-flex align-items-center justify-content-center"
-                                             style="height: 200px;">
-                                            <i class="fas fa-code fa-3x text-muted"></i>
+                                             style="height: 200px;" role="img" aria-label="Image non disponible pour {{ project.title }}">
+                                            <i class="fas fa-code fa-3x text-muted" aria-hidden="true"></i>
                                         </div>
                                     {% endif %}
-                                    <div class="project-overlay">
+                                    <div class="project-overlay position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" aria-hidden="true">
                                         <a href="{{ path('app_project_show', {id: project.id}) }}"
-                                           class="btn btn-primary btn-lg">
-                                            <i class="fas fa-eye me-2"></i>Voir le projet
+                                           class="btn btn-primary btn-lg"
+                                           aria-label="Voir les détails du projet {{ project.title }}">
+                                            <i class="fas fa-eye me-2" aria-hidden="true"></i>Voir le projet
                                         </a>
                                     </div>
                                 </div>
 
                                 <div class="card-body">
-                                    <h3 class="card-title h5">{{ project.title }}</h3>
+                                    <h3 id="project-title-{{ project.id }}" class="card-title h5">{{ project.title }}</h3>
                                     <p class="card-text text-muted">
                                         {{ project.description|length > 100 ?
                                         project.description|slice(0, 100) ~ '...' :
                                         project.description }}
                                     </p>
 
-                                    <div class="project-skills mb-3">
+                                    <div class="project-skills mb-3" role="list" aria-label="Compétences utilisées">
                                         {% for skill in project.skill|slice(0, 3) %}
-                                            <span class="badge bg-light text-dark me-1">{{ skill.name }}</span>
+                                            <span class="badge bg-light text-dark me-1" role="listitem">{{ skill.name }}</span>
                                         {% endfor %}
                                         {% if project.skill|length > 3 %}
-                                            <span class="badge bg-secondary">+{{ project.skill|length - 3 }}</span>
+                                            <span class="badge bg-secondary" aria-label="et {{ project.skill|length - 3 }} autres compétences">+{{ project.skill|length - 3 }}</span>
                                         {% endif %}
                                     </div>
 
                                     <div class="d-flex justify-content-between align-items-center">
                                         <small class="text-muted">
-                                            <i class="fas fa-eye me-1"></i>{{ project.viewCount }} vues
+                                            <i class="fas fa-eye me-1" aria-hidden="true"></i>{{ project.viewCount }} vues
                                         </small>
                                         <small class="text-muted">
                                             {{ project.createdAt|date('M Y') }}
                                         </small>
                                     </div>
                                 </div>
-                            </div>
+                            </article>
                         </div>
                     {% endfor %}
                 </div>
 
                 <div class="text-center mt-5">
-                    <a href="{{ path('app_projects') }}" class="btn btn-outline-primary btn-lg">
-                        Voir tous les projets <i class="fas fa-arrow-right ms-2"></i>
+                    <a href="{{ path('app_projects') }}" class="btn btn-outline-primary btn-lg" aria-label="Voir tous les projets">
+                        Voir tous les projets <i class="fas fa-arrow-right ms-2" aria-hidden="true"></i>
                     </a>
                 </div>
             </div>
@@ -133,28 +134,28 @@
 
     <!-- Skills Section -->
     {% if skills %}
-        <section class="py-5 bg-light">
+        <section class="py-5 bg-light" role="region" aria-labelledby="skills-title">
             <div class="container">
                 <div class="row">
                     <div class="col-12 text-center">
-                        <h2 class="section-title">Compétences Techniques</h2>
+                        <h2 id="skills-title" class="section-title">Compétences Techniques</h2>
                         <p class="lead text-muted mb-5">
                             Technologies et outils que je maîtrise
                         </p>
                     </div>
                 </div>
 
-                <div class="row g-4">
+                <div class="row g-4" role="list" aria-label="Liste des compétences techniques">
                     {% for skill in skills %}
-                        <div class="col-md-6 col-lg-3 mb-3">
+                        <div class="col-md-6 col-lg-3 mb-3" role="listitem">
                             <div class="skill-item text-center p-3 bg-white rounded shadow-sm h-100">
                                 {% if skill.logo %}
                                     <img src="{{ asset('uploads/skills/' ~ skill.logo) }}"
-                                         alt="{{ skill.name }}"
+                                         alt="Logo de {{ skill.name }}"
                                          class="skill-logo mb-2"
                                          style="width: 48px; height: 48px; object-fit: contain;">
                                 {% else %}
-                                    <i class="fas fa-code fa-2x text-primary mb-2"></i>
+                                    <i class="fas fa-code fa-2x text-primary mb-2" aria-hidden="true"></i>
                                 {% endif %}
                                 <h5 class="mb-0">{{ skill.name }}</h5>
                             </div>
@@ -167,24 +168,24 @@
 
     <!-- Testimonials Section -->
     {% if testimonials %}
-        <section class="py-5">
+        <section class="py-5" role="region" aria-labelledby="testimonials-title">
             <div class="container">
                 <div class="row">
                     <div class="col-12 text-center">
-                        <h2 class="section-title">Témoignages</h2>
+                        <h2 id="testimonials-title" class="section-title">Témoignages</h2>
                         <p class="lead text-muted mb-5">
                             Ce qu'ils disent de mon travail
                         </p>
                     </div>
                 </div>
 
-                <div class="row g-4">
+                <div class="row g-4" role="list" aria-label="Témoignages clients">
                     {% for testimonial in testimonials %}
-                        <div class="col-lg-4 mb-4">
-                            <div class="testimonial-card">
-                                <div class="testimonial-rating mb-3 text-warning">
+                        <div class="col-lg-4 mb-4" role="listitem">
+                            <div class="testimonial-card p-4 bg-white rounded shadow-sm h-100">
+                                <div class="testimonial-rating mb-3 text-warning" role="img" aria-label="{{ testimonial.rating }} étoiles sur 5">
                                     {% for i in 1..testimonial.rating %}
-                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star" aria-hidden="true"></i>
                                     {% endfor %}
                                 </div>
                                 <blockquote class="blockquote">
@@ -208,21 +209,21 @@
     {% endif %}
 
     <!-- CTA Section -->
-    <section class="py-5 bg-primary text-white">
+    <section class="py-5 bg-primary text-white" role="region" aria-labelledby="cta-title">
         <div class="container">
             <div class="row justify-content-center text-center">
                 <div class="col-lg-8">
-                    <h2 class="mb-4">Vous avez un projet en tête ?</h2>
+                    <h2 id="cta-title" class="mb-4">Vous avez un projet en tête ?</h2>
                     <p class="lead mb-4">
                         Discutons de votre projet et transformons vos idées en réalité !
                         Je suis disponible pour des missions de développement web.
                     </p>
                     <div class="d-flex justify-content-center gap-3 flex-wrap">
-                        <a href="{{ path('app_contact') }}" class="btn btn-light btn-lg">
-                            <i class="fas fa-rocket me-2"></i>Démarrons un projet
+                        <a href="{{ path('app_contact') }}" class="btn btn-light btn-lg" aria-label="Commencer un projet">
+                            <i class="fas fa-rocket me-2" aria-hidden="true"></i>Démarrons un projet
                         </a>
-                        <a href="mailto:karimmoumid@gmail.com" class="btn btn-outline-light btn-lg">
-                            <i class="fas fa-envelope me-2"></i>Email direct
+                        <a href="mailto:karimmoumid@gmail.com" class="btn btn-outline-light btn-lg" aria-label="Envoyer un e-mail direct à Karim Moumid">
+                            <i class="fas fa-envelope me-2" aria-hidden="true"></i>Email direct
                         </a>
                     </div>
                 </div>

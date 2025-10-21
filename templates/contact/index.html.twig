@@ -7,7 +7,7 @@
 
 {% block body %}
     <!-- Header Section -->
-    <section class="py-5 bg-light">
+    <section class="py-5 bg-light" aria-label="En-tête de la page contact">
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
@@ -21,45 +21,45 @@
     </section>
 
     <!-- Contact Section -->
-    <section class="py-5">
+    <section class="py-5" aria-label="Section de contact">
         <div class="container">
             <div class="row">
                 <!-- Contact Form -->
                 <div class="col-lg-8 mb-5">
-                    <div class="contact-form-wrapper">
-                        <h2 class="h3 mb-4">
-                            <i class="fas fa-paper-plane text-primary me-2"></i>
+                    <div class="contact-form-wrapper" role="region" aria-labelledby="contact-form-title">
+                        <h2 class="h3 mb-4" id="contact-form-title">
+                            <i class="fas fa-paper-plane text-primary me-2" aria-hidden="true"></i>
                             Envoyez-moi un message
                         </h2>
 
-                        {{ form_start(contactForm, {'attr': {'class': 'contact-form', 'novalidate': 'novalidate'}}) }}
+                        {{ form_start(contactForm, {'attr': {'class': 'contact-form', 'novalidate': 'novalidate', 'aria-label': 'Formulaire de contact'}}) }}
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                {{ form_row(contactForm.senderName) }}
+                                {{ form_row(contactForm.senderName, {'attr': {'aria-required': 'true', 'aria-label': 'Votre nom'}}) }}
                             </div>
                             <div class="col-md-6 mb-3">
-                                {{ form_row(contactForm.senderEmail) }}
+                                {{ form_row(contactForm.senderEmail, {'attr': {'aria-required': 'true', 'aria-label': 'Votre email'}}) }}
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            {{ form_row(contactForm.company) }}
+                            {{ form_row(contactForm.company, {'attr': {'aria-label': 'Nom de votre entreprise'}}) }}
                         </div>
 
                         <div class="mb-3">
-                            {{ form_row(contactForm.subject) }}
+                            {{ form_row(contactForm.subject, {'attr': {'aria-required': 'true', 'aria-label': 'Sujet du message'}}) }}
                         </div>
 
                         <div class="mb-4">
-                            {{ form_row(contactForm.content) }}
+                            {{ form_row(contactForm.content, {'attr': {'aria-required': 'true', 'aria-label': 'Contenu du message'}}) }}
                         </div>
 
                         {# === AJOUT OBLIGATOIRE RGPD === #}
                         <!-- Consentement RGPD obligatoire -->
-                        <div class="card bg-light border-primary mb-4">
+                        <div class="card bg-light border-primary mb-4" role="region" aria-labelledby="rgpd-title">
                             <div class="card-body">
-                                <h5 class="card-title h6 text-primary">
-                                    <i class="fas fa-shield-alt me-2"></i>
+                                <h5 class="card-title h6 text-primary" id="rgpd-title">
+                                    <i class="fas fa-shield-alt me-2" aria-hidden="true"></i>
                                     Protection de vos données
                                 </h5>
 
@@ -69,45 +69,48 @@
                                            class="form-check-input"
                                            id="rgpdConsent"
                                            name="rgpdConsent"
-                                           required>
+                                           required
+                                           aria-required="true"
+                                           aria-describedby="rgpd-info"
+                                           aria-label="J'accepte le traitement de mes données personnelles">
                                     <label class="form-check-label" for="rgpdConsent">
-                                        <strong class="text-danger">*</strong>
+                                        <strong class="text-danger" aria-label="Champ obligatoire">*</strong>
                                         J'accepte que mes données personnelles soient collectées et traitées
-                                        conformément à la <a href="{{ path('legal_privacy') }}" target="_blank">politique de confidentialité</a>.
+                                        conformément à la <a href="{{ path('legal_privacy') }}" target="_blank" aria-label="Politique de confidentialité - ouvre dans un nouvel onglet">politique de confidentialité</a>.
                                         Je comprends que mes données seront utilisées uniquement pour répondre
                                         à ma demande et ne seront pas transmises à des tiers.
                                     </label>
                                 </div>
 
                                 <!-- Informations sur le traitement des données -->
-                                <div class="alert alert-info small mb-0">
-                                    <p class="mb-2">
-                                        <i class="fas fa-info-circle me-1"></i>
+                                <div class="alert alert-info small mb-0" id="rgpd-info" role="region" aria-labelledby="data-info-title">
+                                    <p class="mb-2" id="data-info-title">
+                                        <i class="fas fa-info-circle me-1" aria-hidden="true"></i>
                                         <strong>Informations sur le traitement de vos données :</strong>
                                     </p>
-                                    <ul class="mb-0">
-                                        <li>Responsable : Karim MOUMID - karimmoumid@gmail.com</li>
-                                        <li>Finalité : Répondre à votre demande de contact</li>
-                                        <li>Durée de conservation : 3 ans maximum</li>
-                                        <li>Droits : Accès, rectification, suppression, portabilité</li>
-                                        <li>Réclamation : Vous pouvez contacter la CNIL</li>
+                                    <ul class="mb-0" role="list">
+                                        <li role="listitem">Responsable : Karim MOUMID - karimmoumid@gmail.com</li>
+                                        <li role="listitem">Finalité : Répondre à votre demande de contact</li>
+                                        <li role="listitem">Durée de conservation : 3 ans maximum</li>
+                                        <li role="listitem">Droits : Accès, rectification, suppression, portabilité</li>
+                                        <li role="listitem">Réclamation : Vous pouvez contacter la <abbr title="Commission Nationale de l'Informatique et des Libertés">CNIL</abbr></li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Informations complémentaires -->
-                        <div class="small text-muted mb-4">
+                        <div class="small text-muted mb-4" role="region" aria-label="Informations complémentaires">
                             <p class="mb-1">
-                                <i class="fas fa-lock me-1"></i>
+                                <i class="fas fa-lock me-1" aria-hidden="true"></i>
                                 Vos données sont traitées de manière sécurisée et confidentielle.
                             </p>
                             <p class="mb-1">
-                                <i class="fas fa-clock me-1"></i>
+                                <i class="fas fa-clock me-1" aria-hidden="true"></i>
                                 Temps de réponse moyen : 24-48 heures
                             </p>
                             <p class="mb-0">
-                                <i class="fas fa-asterisk me-1 text-danger"></i>
+                                <i class="fas fa-asterisk me-1 text-danger" aria-hidden="true"></i>
                                 Les champs marqués d'un astérisque sont obligatoires
                             </p>
                         </div>
@@ -117,7 +120,8 @@
                                 'label': 'Envoyer mon message',
                                 'attr': {
                                     'class': 'btn btn-primary btn-lg',
-                                    'onclick': 'return validateRGPD()'
+                                    'onclick': 'return validateRGPD()',
+                                    'aria-label': 'Envoyer le formulaire de contact'
                                 }
                             }) }}
                         </div>
@@ -126,7 +130,7 @@
                 </div>
 
                 <!-- Contact Info (reste identique) -->
-                <div class="col-lg-4">
+                <div class="col-lg-4" role="complementary" aria-label="Informations de contact">
                     <!-- ... votre code existant ... -->
                 </div>
             </div>
@@ -136,4 +140,3 @@
     <!-- FAQ Section (reste identique) -->
     <!-- ... votre code existant ... -->
 {% endblock %}
-

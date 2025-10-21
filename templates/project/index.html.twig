@@ -4,11 +4,11 @@
 
 {% block body %}
     <!-- Header Section -->
-    <section class="py-5 bg-light">
+    <section class="py-5 bg-light" role="region" aria-labelledby="projects-header-title">
         <div class="container">
             <div class="row">
                 <div class="col-12 text-center">
-                    <h1 class="display-4 fw-bold text-primary mb-3">Mes Projets</h1>
+                    <h1 id="projects-header-title" class="display-4 fw-bold text-primary mb-3">Mes Projets</h1>
                     <p class="lead text-muted">
                         Découvrez une sélection de mes réalisations en développement web
                     </p>
@@ -18,9 +18,12 @@
     </section>
 
     <!-- Filters Section -->
-    <section class="py-4 bg-white border-bottom">
+    <section class="py-4 bg-white border-bottom" role="search" aria-label="Filtres de recherche de projets">
         <div class="container">
-            <form method="GET" id="projectFilters">
+            <form method="GET" id="projectFilters" aria-describedby="filters-instructions">
+                <p id="filters-instructions" class="visually-hidden">
+                    Vous pouvez rechercher un projet par nom, description ou filtrer par technologie.
+                </p>
                 <div class="row align-items-end g-3">
                     <div class="col-lg-6">
                         <label for="search" class="form-label">Rechercher un projet</label>
@@ -29,11 +32,12 @@
                                id="search"
                                class="form-control form-control-lg"
                                placeholder="Rechercher par titre ou description..."
-                               value="{{ currentSearch }}">
+                               value="{{ currentSearch }}"
+                               aria-label="Rechercher un projet par titre ou description">
                     </div>
                     <div class="col-lg-4">
                         <label for="skill" class="form-label">Filtrer par technologie</label>
-                        <select name="skill" id="skill" class="form-select form-select-lg">
+                        <select name="skill" id="skill" class="form-select form-select-lg" aria-label="Filtrer les projets par technologie utilisée">
                             <option value="">Toutes les technologies</option>
                             {% for skill in skills %}
                                 <option value="{{ skill.name }}" {{ currentSkill == skill.name ? 'selected' : '' }}>
@@ -43,8 +47,8 @@
                         </select>
                     </div>
                     <div class="col-lg-2">
-                        <button type="submit" class="btn btn-primary btn-lg w-100">
-                            <i class="fas fa-search"></i>
+                        <button type="submit" class="btn btn-primary btn-lg w-100" aria-label="Lancer la recherche">
+                            <i class="fas fa-search" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
@@ -53,38 +57,44 @@
     </section>
 
     <!-- Projects Grid -->
-    <section class="py-5">
+    <section class="py-5" role="region" aria-labelledby="projects-grid-title">
         <div class="container">
+            <h2 id="projects-grid-title" class="visually-hidden">Liste des projets disponibles</h2>
+
             {% if projects %}
-                <div class="row g-4" id="projectsContainer">
+                <div class="row g-4" id="projectsContainer" role="list">
                     {% for project in projects %}
-                        <div class="col-lg-6 col-xl-4 mb-4">
-                            <div class="card project-card h-100 border-0">
-                                <div class="project-image">
+                        <div class="col-lg-6 col-xl-4 mb-4" role="listitem">
+                            <div class="card project-card h-100 border-0" role="article" aria-labelledby="project-title-{{ project.id }}">
+                                <div class="project-image position-relative">
                                     {% if project.image %}
                                         <img src="{{ asset('uploads/projects/' ~ project.image) }}"
                                              class="card-img-top"
-                                             alt="{{ project.title }}"
+                                             alt="Image illustrant le projet {{ project.title }}"
                                              style="height: 250px; object-fit: cover;">
                                     {% else %}
                                         <div class="project-placeholder bg-light d-flex align-items-center justify-content-center"
-                                             style="height: 250px;">
-                                            <i class="fas fa-code fa-3x text-muted"></i>
+                                             style="height: 250px;"
+                                             role="img"
+                                             aria-label="Icône de code représentant un projet sans image">
+                                            <i class="fas fa-code fa-3x text-muted" aria-hidden="true"></i>
                                         </div>
                                     {% endif %}
 
                                     <div class="project-overlay">
                                         <a href="{{ path('app_project_show', {id: project.id}) }}"
-                                           class="btn btn-primary btn-lg">
-                                            <i class="fas fa-eye me-2"></i>Voir le projet
+                                           class="btn btn-primary btn-lg"
+                                           aria-label="Voir les détails du projet {{ project.title }}">
+                                            <i class="fas fa-eye me-2" aria-hidden="true"></i>Voir le projet
                                         </a>
                                     </div>
                                 </div>
 
                                 <div class="card-body">
-                                    <h3 class="card-title h5 mb-3">
+                                    <h3 id="project-title-{{ project.id }}" class="card-title h5 mb-3">
                                         <a href="{{ path('app_project_show', {id: project.id}) }}"
-                                           class="text-decoration-none text-primary">
+                                           class="text-decoration-none text-primary"
+                                           aria-label="Accéder à la page du projet {{ project.title }}">
                                             {{ project.title }}
                                         </a>
                                     </h3>
@@ -95,25 +105,25 @@
                                         project.description }}
                                     </p>
 
-                                    <div class="project-skills mb-3">
+                                    <div class="project-skills mb-3" role="list" aria-label="Compétences utilisées dans le projet {{ project.title }}">
                                         {% for skill in project.skill|slice(0, 4) %}
-                                            <span class="badge bg-light text-dark me-1 mb-1">
-                                            {{ skill.name }}
-                                        </span>
+                                            <span class="badge bg-light text-dark me-1 mb-1" role="listitem">
+                                                {{ skill.name }}
+                                            </span>
                                         {% endfor %}
                                         {% if project.skill|length > 4 %}
-                                            <span class="badge bg-secondary mb-1">
-                                            +{{ project.skill|length - 4 }}
-                                        </span>
+                                            <span class="badge bg-secondary mb-1" aria-label="et {{ project.skill|length - 4 }} autres compétences">
+                                                +{{ project.skill|length - 4 }}
+                                            </span>
                                         {% endif %}
                                     </div>
 
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">
-                                            <i class="fas fa-eye me-1"></i>{{ project.viewCount }} vues
+                                        <small class="text-muted" aria-label="Nombre de vues : {{ project.viewCount }}">
+                                            <i class="fas fa-eye me-1" aria-hidden="true"></i>{{ project.viewCount }} vues
                                         </small>
-                                        <small class="text-muted">
-                                            <i class="fas fa-calendar me-1"></i>{{ project.createdAt|date('M Y') }}
+                                        <small class="text-muted" aria-label="Projet créé en {{ project.createdAt|date('M Y') }}">
+                                            <i class="fas fa-calendar me-1" aria-hidden="true"></i>{{ project.createdAt|date('M Y') }}
                                         </small>
                                     </div>
                                 </div>
@@ -123,20 +133,20 @@
                 </div>
 
                 {% if projects|length == 0 %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-search fa-4x text-muted mb-4"></i>
+                    <div class="text-center py-5" role="alert" aria-live="polite">
+                        <i class="fas fa-search fa-4x text-muted mb-4" aria-hidden="true"></i>
                         <h3 class="text-muted">Aucun projet trouvé</h3>
                         <p class="text-muted mb-4">
                             Aucun projet ne correspond à vos critères de recherche.
                         </p>
-                        <a href="{{ path('app_projects') }}" class="btn btn-primary">
-                            <i class="fas fa-refresh me-2"></i>Voir tous les projets
+                        <a href="{{ path('app_projects') }}" class="btn btn-primary" aria-label="Réinitialiser les filtres de recherche">
+                            <i class="fas fa-refresh me-2" aria-hidden="true"></i>Voir tous les projets
                         </a>
                     </div>
                 {% endif %}
             {% else %}
-                <div class="text-center py-5">
-                    <i class="fas fa-code fa-4x text-muted mb-4"></i>
+                <div class="text-center py-5" role="alert" aria-live="polite">
+                    <i class="fas fa-code fa-4x text-muted mb-4" aria-hidden="true"></i>
                     <h3 class="text-muted">Aucun projet disponible</h3>
                     <p class="text-muted">
                         Les projets seront bientôt disponibles !

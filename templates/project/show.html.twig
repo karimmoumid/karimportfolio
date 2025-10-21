@@ -101,7 +101,20 @@
         .lightbox-img {
             cursor: zoom-in;
         }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1056;
+            opacity: 0.9;
+            transition: all 0.2s ease;
+            font-size: 1.2rem;
+        }
 
+        .close-btn:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
         /* Responsive */
         @media (max-width: 768px) {
             .carousel-item img {
@@ -111,37 +124,43 @@
             .thumbnail-img {
                 height: 40px;
             }
+            .close-btn {
+                top: 5px;
+                right: 5px;
+                font-size: 1rem;
+                padding: 0.5rem 0.5rem;
+            }
         }
     </style>
 {% endblock %}
 
 {% block body %}
     <!-- Project Header -->
-    <section class="py-5 bg-light">
+    <section class="py-5 bg-light" aria-label="En-tête du projet">
         <div class="container">
             <div class="row">
                 <div class="col-12">
-                    <nav aria-label="breadcrumb">
+                    <nav aria-label="Fil d'Ariane">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ path('app_home') }}">Accueil</a></li>
-                            <li class="breadcrumb-item"><a href="{{ path('app_projects') }}">Projets</a></li>
-                            <li class="breadcrumb-item active">{{ project.title }}</li>
+                            <li class="breadcrumb-item"><a href="{{ path('app_home') }}" aria-label="Retour à l'accueil">Accueil</a></li>
+                            <li class="breadcrumb-item"><a href="{{ path('app_projects') }}" aria-label="Voir tous les projets">Projets</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ project.title }}</li>
                         </ol>
                     </nav>
 
                     <h1 class="display-5 fw-bold text-primary mb-3">{{ project.title }}</h1>
                     <p class="lead text-muted mb-4">{{ project.description }}</p>
 
-                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <div class="d-flex flex-wrap gap-2 align-items-center" role="group" aria-label="Informations sur le projet">
                         <span class="text-muted me-3">
-                            <i class="fas fa-eye me-1"></i>{{ project.viewCount ?? 0 }} vues
+                            <i class="fas fa-eye me-1" aria-hidden="true"></i><span aria-label="{{ project.viewCount ?? 0 }} vues">{{ project.viewCount ?? 0 }} vues</span>
                         </span>
                         <span class="text-muted me-3">
-                            <i class="fas fa-calendar me-1"></i>{{ project.createdAt|date('d/m/Y') }}
+                            <i class="fas fa-calendar me-1" aria-hidden="true"></i><span aria-label="Créé le {{ project.createdAt|date('d/m/Y') }}">{{ project.createdAt|date('d/m/Y') }}</span>
                         </span>
                         {% if project.updatedAt and project.updatedAt != project.createdAt %}
                             <span class="text-muted">
-                                <i class="fas fa-edit me-1"></i>Mis à jour le {{ project.updatedAt|date('d/m/Y') }}
+                                <i class="fas fa-edit me-1" aria-hidden="true"></i><span aria-label="Mis à jour le {{ project.updatedAt|date('d/m/Y') }}">Mis à jour le {{ project.updatedAt|date('d/m/Y') }}</span>
                             </span>
                         {% endif %}
                     </div>
@@ -151,45 +170,49 @@
     </section>
 
     <!-- Project Content -->
-    <section class="py-5">
+    <section class="py-5" aria-label="Contenu principal du projet">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 mb-4">
 
                     <!-- Gallery Carousel (priorité aux images de galerie) -->
                     {% if project.images|length > 0 %}
-                        <div class="project-gallery-carousel mb-5">
-                            <div id="projectCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="project-gallery-carousel mb-5" role="region" aria-label="Galerie d'images du projet">
+                            <div id="projectCarousel" class="carousel slide" data-bs-ride="carousel" aria-label="Carrousel d'images">
 
                                 <!-- Indicateurs -->
                                 {% if project.images|length > 1 %}
-                                    <div class="carousel-indicators">
+                                    <div class="carousel-indicators" role="tablist" aria-label="Indicateurs de navigation du carrousel">
                                         {% for key, image in project.images %}
                                             <button type="button"
                                                     data-bs-target="#projectCarousel"
                                                     data-bs-slide-to="{{ key }}"
                                                     {% if loop.first %}class="active" aria-current="true"{% endif %}
-                                                    aria-label="Slide {{ loop.index }}">
+                                                    aria-label="Aller à l'image {{ loop.index }} sur {{ project.images|length }}"
+                                                    role="tab">
                                             </button>
                                         {% endfor %}
                                     </div>
                                 {% endif %}
 
                                 <!-- Images du carousel -->
-                                <div class="carousel-inner rounded shadow">
+                                <div class="carousel-inner rounded shadow" role="group" aria-roledescription="carousel">
                                     {% for image in project.images %}
-                                        <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                        <div class="carousel-item {% if loop.first %}active{% endif %}" role="tabpanel" aria-label="Image {{ loop.index }} sur {{ project.images|length }}">
                                             <img src="{{ asset('uploads/projects/gallery/' ~ image.filename) }}"
                                                  class="d-block w-100 lightbox-img"
-                                                 alt="{{ image.altText ?? project.title ~ ' - Image ' ~ loop.index }}"
+                                                 alt="{{ image.altText ?? project.title ~ ' - Image ' ~ loop.index ~ ' sur ' ~ project.images|length }}"
                                                  data-bs-toggle="modal"
                                                  data-bs-target="#lightboxModal"
-                                                 data-bs-img="{{ asset('uploads/projects/gallery/' ~ image.filename) }}">
+                                                 data-bs-img="{{ asset('uploads/projects/gallery/' ~ image.filename) }}"
+                                                 role="button"
+                                                 tabindex="0"
+                                                 aria-label="Cliquez pour agrandir l'image {{ loop.index }} sur {{ project.images|length }}">
 
                                             <!-- Caption avec numéro et nom original -->
                                             <div class="carousel-caption d-none d-md-block">
                                                 <div class="bg-dark bg-opacity-75 rounded px-3 py-2">
-                                                    <p class="mb-0">{{ image.originalName ?? 'Image ' ~ loop.index }} ({{ loop.index }}/{{ project.images|length }})</p>
+                                                    <p class="mb-0" aria-live="polite">{{ image.originalName ?? 'Image ' ~ loop.index }} ({{ loop.index }}/{{ project.images|length }})</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -198,11 +221,11 @@
 
                                 <!-- Contrôles -->
                                 {% if project.images|length > 1 %}
-                                    <button class="carousel-control-prev" type="button" data-bs-target="#projectCarousel" data-bs-slide="prev">
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#projectCarousel" data-bs-slide="prev" aria-label="Image précédente">
                                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                         <span class="visually-hidden">Précédent</span>
                                     </button>
-                                    <button class="carousel-control-next" type="button" data-bs-target="#projectCarousel" data-bs-slide="next">
+                                    <button class="carousel-control-next" type="button" data-bs-target="#projectCarousel" data-bs-slide="next" aria-label="Image suivante">
                                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                         <span class="visually-hidden">Suivant</span>
                                     </button>
@@ -211,23 +234,26 @@
 
                             <!-- Thumbnails -->
                             {% if project.images|length > 1 %}
-                                <div class="carousel-thumbnails mt-3">
+                                <div class="carousel-thumbnails mt-3" role="region" aria-label="Miniatures de navigation">
                                     <div class="row g-2">
                                         {% for key, image in project.images %}
                                             {% if loop.index <= 12 %} {# Limiter à 12 thumbnails #}
                                                 <div class="col-2 col-md-1">
                                                     <img src="{{ asset('uploads/projects/gallery/' ~ image.filename) }}"
                                                          class="img-fluid rounded thumbnail-img {% if loop.first %}active{% endif %}"
-                                                         alt="Miniature {{ loop.index }}"
+                                                         alt="Miniature {{ loop.index }} - {{ image.altText ?? project.title }}"
                                                          data-bs-target="#projectCarousel"
                                                          data-bs-slide-to="{{ key }}"
-                                                         style="opacity: 0.6;">
+                                                         style="opacity: 0.6;"
+                                                         role="button"
+                                                         tabindex="0"
+                                                         aria-label="Aller à l'image {{ loop.index }} sur {{ project.images|length }}">
                                                 </div>
                                             {% endif %}
                                         {% endfor %}
                                         {% if project.images|length > 12 %}
                                             <div class="col-12 text-center mt-2">
-                                                <small class="text-muted">+{{ project.images|length - 12 }} autres images</small>
+                                                <small class="text-muted" aria-label="{{ project.images|length - 12 }} images supplémentaires disponibles">+{{ project.images|length - 12 }} autres images</small>
                                             </div>
                                         {% endif %}
                                     </div>
@@ -237,29 +263,32 @@
 
                     {% elseif project.image %}
                         <!-- Image principale seule si pas de galerie -->
-                        <div class="project-image-main mb-5">
+                        <div class="project-image-main mb-5" role="img" aria-label="Image principale du projet">
                             <img src="{{ asset('uploads/projects/' ~ project.image) }}"
                                  class="img-fluid rounded shadow lightbox-img"
-                                 alt="{{ project.title }}"
+                                 alt="{{ project.title }} - Image principale du projet"
                                  data-bs-toggle="modal"
                                  data-bs-target="#lightboxModal"
                                  data-bs-img="{{ asset('uploads/projects/' ~ project.image) }}"
-                                 style="width: 100%; max-height: 500px; object-fit: cover; cursor: zoom-in;">
+                                 style="width: 100%; max-height: 500px; object-fit: cover; cursor: zoom-in;"
+                                 role="button"
+                                 tabindex="0"
+                                 aria-label="Cliquez pour agrandir l'image principale du projet {{ project.title }}">
                         </div>
                     {% endif %}
 
                     <!-- Project Description -->
-                    <div class="project-description">
-                        <h2 class="h3 mb-4">
-                            <i class="fas fa-info-circle text-primary me-2"></i>
+                    <div class="project-description" role="region" aria-labelledby="project-description-title">
+                        <h2 class="h3 mb-4" id="project-description-title">
+                            <i class="fas fa-info-circle text-primary me-2" aria-hidden="true"></i>
                             Description du projet
                         </h2>
                         {% if project.fullDescription %}
-                            <div class="content">
+                            <div class="content" aria-label="Description complète du projet">
                                 {{ project.fullDescription|nl2br }}
                             </div>
                         {% else %}
-                            <div class="content">
+                            <div class="content" aria-label="Description du projet">
                                 {{ project.description|nl2br }}
                             </div>
                         {% endif %}
@@ -267,22 +296,22 @@
 
                     <!-- Testimonials -->
                     {% if testimonials is defined and testimonials|length > 0 %}
-                        <div class="project-testimonials mt-5">
-                            <h3 class="h4 mb-4">
-                                <i class="fas fa-quote-left text-primary me-2"></i>
+                        <div class="project-testimonials mt-5" role="region" aria-labelledby="testimonials-title">
+                            <h3 class="h4 mb-4" id="testimonials-title">
+                                <i class="fas fa-quote-left text-primary me-2" aria-hidden="true"></i>
                                 Témoignages sur ce projet
                             </h3>
                             <div class="row g-4">
                                 {% for testimonial in testimonials %}
                                     <div class="col-md-6">
-                                        <div class="card border-0 bg-light h-100">
+                                        <article class="card border-0 bg-light h-100" aria-label="Témoignage de {{ testimonial.authorName }}">
                                             <div class="card-body">
-                                                <div class="testimonial-rating mb-2 text-warning">
+                                                <div class="testimonial-rating mb-2 text-warning" role="img" aria-label="Note : {{ testimonial.rating }} étoiles sur 5">
                                                     {% for i in 1..testimonial.rating %}
-                                                        <i class="fas fa-star"></i>
+                                                        <i class="fas fa-star" aria-hidden="true"></i>
                                                     {% endfor %}
                                                     {% for i in (testimonial.rating + 1)..5 %}
-                                                        <i class="far fa-star"></i>
+                                                        <i class="far fa-star" aria-hidden="true"></i>
                                                     {% endfor %}
                                                 </div>
                                                 <blockquote class="blockquote">
@@ -298,7 +327,7 @@
                                                     {% endif %}
                                                 </div>
                                             </div>
-                                        </div>
+                                        </article>
                                     </div>
                                 {% endfor %}
                             </div>
@@ -307,20 +336,20 @@
                 </div>
 
                 <!-- Sidebar -->
-                <div class="col-lg-4">
+                <aside class="col-lg-4" role="complementary" aria-label="Informations complémentaires du projet">
                     <div class="project-sidebar sticky-top" style="top: 100px;">
 
                         <!-- Technologies -->
                         {% if project.skill|length > 0 %}
-                            <div class="card border-0 bg-light mb-4">
+                            <div class="card border-0 bg-light mb-4" role="region" aria-labelledby="technologies-title">
                                 <div class="card-body">
-                                    <h4 class="card-title h5">
-                                        <i class="fas fa-tools text-primary me-2"></i>
+                                    <h4 class="card-title h5" id="technologies-title">
+                                        <i class="fas fa-tools text-primary me-2" aria-hidden="true"></i>
                                         Technologies utilisées
                                     </h4>
-                                    <div class="skills-list">
+                                    <div class="skills-list" role="list" aria-label="Liste des technologies">
                                         {% for skill in project.skill %}
-                                            <span class="badge bg-primary me-2 mb-2 fs-6">
+                                            <span class="badge bg-primary me-2 mb-2 fs-6" role="listitem">
                                                 {{ skill.name }}
                                             </span>
                                         {% endfor %}
@@ -330,28 +359,28 @@
                         {% endif %}
 
                         <!-- Statistiques -->
-                        <div class="card border-0 bg-light mb-4">
+                        <div class="card border-0 bg-light mb-4" role="region" aria-labelledby="statistics-title">
                             <div class="card-body">
-                                <h4 class="card-title h5">
-                                    <i class="fas fa-chart-bar text-primary me-2"></i>
+                                <h4 class="card-title h5" id="statistics-title">
+                                    <i class="fas fa-chart-bar text-primary me-2" aria-hidden="true"></i>
                                     Statistiques
                                 </h4>
-                                <ul class="list-unstyled mb-0">
-                                    <li class="mb-2">
-                                        <i class="fas fa-eye text-muted me-2"></i>
+                                <ul class="list-unstyled mb-0" role="list">
+                                    <li class="mb-2" role="listitem">
+                                        <i class="fas fa-eye text-muted me-2" aria-hidden="true"></i>
                                         <strong>{{ project.viewCount ?? 0 }}</strong> vues
                                     </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-images text-muted me-2"></i>
+                                    <li class="mb-2" role="listitem">
+                                        <i class="fas fa-images text-muted me-2" aria-hidden="true"></i>
                                         <strong>{{ project.images|length }}</strong> images
                                     </li>
-                                    <li class="mb-2">
-                                        <i class="fas fa-calendar text-muted me-2"></i>
+                                    <li class="mb-2" role="listitem">
+                                        <i class="fas fa-calendar text-muted me-2" aria-hidden="true"></i>
                                         Créé le <strong>{{ project.createdAt|date('d/m/Y') }}</strong>
                                     </li>
                                     {% if project.skill|length > 0 %}
-                                        <li class="mb-2">
-                                            <i class="fas fa-code text-muted me-2"></i>
+                                        <li class="mb-2" role="listitem">
+                                            <i class="fas fa-code text-muted me-2" aria-hidden="true"></i>
                                             <strong>{{ project.skill|length }}</strong> technologies
                                         </li>
                                     {% endif %}
@@ -360,35 +389,35 @@
                         </div>
 
                         <!-- CTA Contact -->
-                        <div class="card border-0 bg-primary text-white">
+                        <div class="card border-0 bg-primary text-white" role="region" aria-labelledby="cta-title">
                             <div class="card-body text-center">
-                                <h4 class="card-title">
-                                    <i class="fas fa-rocket mb-3"></i>
+                                <h4 class="card-title" id="cta-title">
+                                    <i class="fas fa-rocket mb-3" aria-hidden="true"></i>
                                     <br>Projet similaire ?
                                 </h4>
                                 <p class="card-text">
                                     Vous avez un projet similaire en tête ? Discutons-en !
                                 </p>
-                                <a href="{{ path('app_contact') }}" class="btn btn-light">
-                                    <i class="fas fa-comments me-2"></i>
+                                <a href="{{ path('app_contact') }}" class="btn btn-light" aria-label="Me contacter pour discuter de votre projet">
+                                    <i class="fas fa-comments me-2" aria-hidden="true"></i>
                                     Me contacter
                                 </a>
                             </div>
                         </div>
                     </div>
-                </div>
+                </aside>
             </div>
         </div>
     </section>
 
     <!-- Related Projects -->
     {% if relatedProjects is defined and relatedProjects|length > 0 %}
-        <section class="py-5 bg-light">
+        <section class="py-5 bg-light" role="region" aria-labelledby="related-projects-title">
             <div class="container">
                 <div class="row">
                     <div class="col-12 mb-4">
-                        <h2 class="h3">
-                            <i class="fas fa-th text-primary me-2"></i>
+                        <h2 class="h3" id="related-projects-title">
+                            <i class="fas fa-th text-primary me-2" aria-hidden="true"></i>
                             Projets similaires
                         </h2>
                         <p class="text-muted">Découvrez d'autres projets qui pourraient vous intéresser</p>
@@ -398,28 +427,31 @@
                 <div class="row g-4">
                     {% for relatedProject in relatedProjects|slice(0, 3) %}
                         <div class="col-lg-4">
-                            <div class="card project-card h-100 border-0 shadow-sm">
+                            <article class="card project-card h-100 border-0 shadow-sm" aria-label="Projet {{ relatedProject.title }}">
                                 <div class="project-image">
                                     {% if relatedProject.image %}
                                         <img src="{{ asset('uploads/projects/' ~ relatedProject.image) }}"
                                              class="card-img-top"
-                                             alt="{{ relatedProject.title }}"
+                                             alt="{{ relatedProject.title }} - Image de présentation"
                                              style="height: 200px; object-fit: cover;">
                                     {% elseif relatedProject.images|length > 0 %}
                                         <img src="{{ asset('uploads/projects/gallery/' ~ relatedProject.images[0].filename) }}"
                                              class="card-img-top"
-                                             alt="{{ relatedProject.title }}"
+                                             alt="{{ relatedProject.title }} - Image de présentation"
                                              style="height: 200px; object-fit: cover;">
                                     {% else %}
                                         <div class="bg-light d-flex align-items-center justify-content-center"
-                                             style="height: 200px;">
-                                            <i class="fas fa-code fa-3x text-muted"></i>
+                                             style="height: 200px;"
+                                             role="img"
+                                             aria-label="Pas d'image disponible pour {{ relatedProject.title }}">
+                                            <i class="fas fa-code fa-3x text-muted" aria-hidden="true"></i>
                                         </div>
                                     {% endif %}
                                     <div class="project-overlay">
                                         <a href="{{ path('app_project_show', {id: relatedProject.id}) }}"
-                                           class="btn btn-light">
-                                            <i class="fas fa-eye me-2"></i>
+                                           class="btn btn-light"
+                                           aria-label="Voir le projet {{ relatedProject.title }}">
+                                            <i class="fas fa-eye me-2" aria-hidden="true"></i>
                                             Voir le projet
                                         </a>
                                     </div>
@@ -430,16 +462,16 @@
                                     <p class="card-text text-muted">
                                         {{ relatedProject.description|slice(0, 100) }}...
                                     </p>
-                                    <div class="project-skills">
+                                    <div class="project-skills" role="list" aria-label="Technologies utilisées">
                                         {% for skill in relatedProject.skill|slice(0, 3) %}
-                                            <span class="badge bg-light text-dark me-1">{{ skill.name }}</span>
+                                            <span class="badge bg-light text-dark me-1" role="listitem">{{ skill.name }}</span>
                                         {% endfor %}
                                         {% if relatedProject.skill|length > 3 %}
-                                            <span class="badge bg-light text-dark">+{{ relatedProject.skill|length - 3 }}</span>
+                                            <span class="badge bg-light text-dark" aria-label="{{ relatedProject.skill|length - 3 }} technologies supplémentaires">+{{ relatedProject.skill|length - 3 }}</span>
                                         {% endif %}
                                     </div>
                                 </div>
-                            </div>
+                            </article>
                         </div>
                     {% endfor %}
                 </div>
@@ -448,14 +480,17 @@
     {% endif %}
 
     <!-- Lightbox Modal -->
-    <div class="modal fade" id="lightboxModal" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal fade" id="lightboxModal" tabindex="-1" role="dialog" aria-labelledby="lightboxModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
             <div class="modal-content bg-transparent border-0">
                 <div class="modal-header border-0 pb-0">
-                    <button type="button" class="btn-close btn-close-white bg-dark rounded-circle p-2" data-bs-dismiss="modal"></button>
+                    <h5 class="visually-hidden" id="lightboxModalLabel">Image agrandie</h5>
+                    <button type="button" class="btn btn-dark rounded-circle p-2 close-btn" data-bs-dismiss="modal" aria-label="Fermer la fenêtre modale">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                    </button>
                 </div>
                 <div class="modal-body p-0 text-center">
-                    <img id="lightboxImage" src="" class="img-fluid rounded" alt="">
+                    <img id="lightboxImage" src="" class="img-fluid rounded" alt="Image agrandie du projet">
                 </div>
             </div>
         </div>
@@ -475,7 +510,14 @@
                     thumbnails.forEach(thumb => thumb.classList.remove('active'));
                     if (thumbnails[e.to]) {
                         thumbnails[e.to].classList.add('active');
+                        thumbnails[e.to].setAttribute('aria-current', 'true');
                     }
+                    // Mise à jour des aria-current pour les autres
+                    thumbnails.forEach((thumb, index) => {
+                        if (index !== e.to) {
+                            thumb.removeAttribute('aria-current');
+                        }
+                    });
                 });
 
                 // Click sur les thumbnails
@@ -484,6 +526,17 @@
                         const carouselInstance = bootstrap.Carousel.getInstance(carousel);
                         if (carouselInstance) {
                             carouselInstance.to(index);
+                        }
+                    });
+
+                    // Support clavier pour les thumbnails
+                    thumb.addEventListener('keydown', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            const carouselInstance = bootstrap.Carousel.getInstance(carousel);
+                            if (carouselInstance) {
+                                carouselInstance.to(index);
+                            }
                         }
                     });
                 });
@@ -495,12 +548,24 @@
                 lightboxModal.addEventListener('show.bs.modal', function (event) {
                     const button = event.relatedTarget;
                     const imgSrc = button.getAttribute('data-bs-img');
+                    const imgAlt = button.getAttribute('alt');
                     const modalImg = document.getElementById('lightboxImage');
                     if (modalImg && imgSrc) {
                         modalImg.src = imgSrc;
+                        modalImg.alt = imgAlt || 'Image agrandie';
                     }
                 });
             }
+
+            // Support clavier pour les images lightbox
+            document.querySelectorAll('.lightbox-img').forEach(img => {
+                img.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        img.click();
+                    }
+                });
+            });
 
             // Configuration du carousel
             if (carousel) {
